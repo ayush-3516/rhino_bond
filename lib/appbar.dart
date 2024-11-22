@@ -29,7 +29,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         trailing: GestureDetector(
           onTap: () {
-            scaffoldKey.currentState?.openEndDrawer();
+            scaffoldKey.currentState?.openDrawer();
           },
           child: const Icon(CupertinoIcons.line_horizontal_3),
         ),
@@ -39,6 +39,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     return AppBar(
+      automaticallyImplyLeading: false, // This removes the left burger button
       title: Padding(
         padding: const EdgeInsets.only(left: 8.0),
         child: SvgPicture.asset(
@@ -50,22 +51,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      centerTitle: false,
       actions: [
         IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
-            scaffoldKey.currentState?.openEndDrawer();
+            scaffoldKey.currentState?.openDrawer();
           },
         ),
       ],
+      centerTitle: true,
       elevation: 0,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
     );
   }
 
   @override
-  Size get preferredSize => Platform.isIOS 
-    ? const Size.fromHeight(44.0)  // iOS navigation bar height
-    : const Size.fromHeight(kToolbarHeight);  // Material app bar height
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

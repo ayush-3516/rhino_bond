@@ -76,28 +76,60 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen> {
         title: 'Rewards History',
         scaffoldKey: _scaffoldKey,
       ),
-      endDrawer: const AppDrawer(),
+      drawer: const AppDrawer(),
       body: Column(
         children: [
           // Summary Card
-          Card(
+          Container(
             margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Theme.of(context).primaryColor,
+                  Theme.of(context).primaryColor.withOpacity(0.8),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  Text(
-                    totalPoints.toString(),
-                    style: const TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.stars,
+                        color: Colors.white.withOpacity(0.9),
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        totalPoints.toString(),
+                        style: const TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                  const Text(
+                  const SizedBox(height: 8),
+                  Text(
                     'Total Points',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey,
+                      color: Colors.white.withOpacity(0.9),
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -106,32 +138,49 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen> {
           ),
 
           // Filter Section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
                 const Text(
-                  'Filter: ',
+                  'Filter by:',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
                   ),
                 ),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _selectedFilter,
-                  items: _filters.map((String filter) {
-                    return DropdownMenuItem<String>(
-                      value: filter,
-                      child: Text(filter),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedFilter = newValue;
-                      });
-                    }
-                  },
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: _filters.map((filter) {
+                        final isSelected = _selectedFilter == filter;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: FilterChip(
+                            selected: isSelected,
+                            label: Text(filter),
+                            onSelected: (bool selected) {
+                              setState(() {
+                                _selectedFilter = filter;
+                              });
+                            },
+                            selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
+                            checkmarkColor: Theme.of(context).primaryColor,
+                            labelStyle: TextStyle(
+                              color: isSelected 
+                                ? Theme.of(context).primaryColor
+                                : Colors.black87,
+                              fontWeight: isSelected 
+                                ? FontWeight.w600 
+                                : FontWeight.normal,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -139,68 +188,123 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen> {
 
           // History List
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: filteredHistory.length,
-              itemBuilder: (context, index) {
-                final item = filteredHistory[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    leading: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: item.type == 'earned' 
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(24),
+            child: filteredHistory.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.history,
+                        size: 64,
+                        color: Colors.grey[400],
                       ),
-                      child: Icon(
-                        item.type == 'earned' 
-                          ? Icons.add_circle_outline
-                          : Icons.remove_circle_outline,
-                        color: item.type == 'earned' 
-                          ? Colors.green
-                          : Colors.red,
-                      ),
-                    ),
-                    title: Text(
-                      item.title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(item.description),
-                        const SizedBox(height: 4),
-                        Text(
-                          _formatDate(item.date),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No transactions found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
-                    trailing: Text(
-                      '${item.points > 0 ? '+' : ''}${item.points}',
-                      style: TextStyle(
-                        color: item.type == 'earned' 
-                          ? Colors.green
-                          : Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
                       ),
-                    ),
-                    isThreeLine: true,
+                    ],
                   ),
-                );
-              },
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: filteredHistory.length,
+                  itemBuilder: (context, index) {
+                    final item = filteredHistory[index];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            // Transaction Icon
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: item.type == 'earned'
+                                  ? Colors.green.withOpacity(0.1)
+                                  : Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Icon(
+                                item.type == 'earned'
+                                  ? Icons.add_circle_outline
+                                  : Icons.remove_circle_outline,
+                                color: item.type == 'earned'
+                                  ? Colors.green
+                                  : Colors.red,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            // Transaction Details
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          item.title,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${item.points > 0 ? '+' : ''}${item.points}',
+                                        style: TextStyle(
+                                          color: item.type == 'earned'
+                                            ? Colors.green
+                                            : Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    item.description,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    _formatDate(item.date),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
             ),
-          ),
         ],
       ),
     );

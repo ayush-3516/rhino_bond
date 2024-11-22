@@ -40,7 +40,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: 'Dashboard',
         scaffoldKey: _scaffoldKey,
       ),
-      endDrawer: const AppDrawer(),
+      drawer: const AppDrawer(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

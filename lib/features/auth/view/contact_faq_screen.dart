@@ -64,10 +64,10 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(
-        title: 'Contact Us',
+        title: 'Contact & FAQ',
         scaffoldKey: _scaffoldKey,
       ),
-      endDrawer: const AppDrawer(),
+      drawer: const AppDrawer(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
