@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rhino_bond/appbar.dart';
 import 'package:rhino_bond/widgets/app_drawer.dart';
+import 'package:rhino_bond/theme/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -26,6 +28,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(
@@ -70,6 +74,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Card(
                 child: Column(
                   children: [
+                    ListTile(
+                      leading: Icon(
+                        themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                      ),
+                      title: const Text('Dark Mode'),
+                      trailing: Switch(
+                        value: themeProvider.isDarkMode,
+                        onChanged: (value) {
+                          themeProvider.toggleTheme();
+                        },
+                      ),
+                    ),
                     SwitchListTile(
                       secondary: const Icon(Icons.notifications),
                       title: const Text('Push Notifications'),
@@ -79,18 +95,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         setState(() {
                           _notificationsEnabled = value;
                         });
-                      },
-                    ),
-                    SwitchListTile(
-                      secondary: const Icon(Icons.dark_mode),
-                      title: const Text('Dark Mode'),
-                      subtitle: const Text('Toggle dark/light theme'),
-                      value: _darkModeEnabled,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _darkModeEnabled = value;
-                        });
-                        // TODO: Implement theme switching
                       },
                     ),
                     ListTile(

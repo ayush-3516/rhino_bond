@@ -1,13 +1,21 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'features/auth/view/dashboard_screen.dart';
 import 'features/auth/view/reward_products_screen.dart';
 import 'features/auth/view/qr_scanner_screen.dart';
 import 'features/auth/view/account_screen.dart';
+import 'theme/theme_provider.dart';
+import 'theme/app_theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,21 +24,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final platform = Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android;
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return MaterialApp(
       title: 'Rhino Bond',
-      theme: ThemeData(
-        platform: platform,
-        primarySwatch: Colors.grey,
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: AppBarTheme(
-          backgroundColor: platform == TargetPlatform.iOS ? CupertinoColors.systemBackground : Colors.white,
-          foregroundColor: platform == TargetPlatform.iOS ? CupertinoColors.label : Colors.black,
-          elevation: 0,
-        ),
-        // Use system font for iOS
-        fontFamily: platform == TargetPlatform.iOS ? '.SF Pro Text' : null,
-      ),
+      theme: AppTheme.lightTheme.copyWith(platform: platform),
+      darkTheme: AppTheme.darkTheme.copyWith(platform: platform),
+      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       initialRoute: '/',
       routes: {
         '/': (context) => const DashboardScreen(),
