@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/user_provider.dart';
-import '../services/api_service.dart';
+import 'package:rhino_bond/providers/user_provider.dart';
+import 'package:rhino_bond/services/api_service.dart';
 
 class KYCRequestScreen extends StatefulWidget {
   const KYCRequestScreen({Key? key}) : super(key: key);
@@ -13,7 +13,7 @@ class KYCRequestScreen extends StatefulWidget {
 class _KycRequestScreenState extends State<KYCRequestScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
-  
+
   String _fullName = '';
   String _idNumber = '';
   String _email = '';
@@ -148,8 +148,9 @@ class _KycRequestScreenState extends State<KYCRequestScreen> {
                       label: 'Phone Number',
                       keyboardType: TextInputType.phone,
                       onSaved: (value) => _phone = value!,
-                      validator: (value) =>
-                          value!.isEmpty ? 'Please enter your phone number' : null,
+                      validator: (value) => value!.isEmpty
+                          ? 'Please enter your phone number'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
@@ -176,8 +177,8 @@ class _KycRequestScreenState extends State<KYCRequestScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor:
-                                      AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 ),
                               )
                             : const Text(
@@ -238,7 +239,8 @@ class _KycRequestScreenState extends State<KYCRequestScreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
+      initialDate:
+          DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
       firstDate: DateTime(1900),
       lastDate: DateTime.now().subtract(const Duration(days: 6570)),
       builder: (context, child) {

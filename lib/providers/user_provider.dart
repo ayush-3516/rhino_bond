@@ -8,6 +8,8 @@ class UserData {
   final int points;
   final bool isKycVerified;
   final String? kycStatus;
+  final String email;
+  final String phone;
 
   UserData({
     required this.name,
@@ -16,6 +18,8 @@ class UserData {
     required this.points,
     this.isKycVerified = false,
     this.kycStatus,
+    required this.email,
+    required this.phone,
   });
 
   UserData copyWith({
@@ -25,6 +29,8 @@ class UserData {
     int? points,
     bool? isKycVerified,
     String? kycStatus,
+    String? email,
+    String? phone,
   }) {
     return UserData(
       name: name ?? this.name,
@@ -33,6 +39,8 @@ class UserData {
       points: points ?? this.points,
       isKycVerified: isKycVerified ?? this.isKycVerified,
       kycStatus: kycStatus ?? this.kycStatus,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
     );
   }
 }
@@ -48,6 +56,8 @@ class UserProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isKycVerified => _userData?.isKycVerified ?? false;
   String? get kycStatus => _userData?.kycStatus;
+  String get email => _userData?.email ?? '';
+  String get phone => _userData?.phone ?? '';
 
   void setToken(String token) {
     _token = token;
@@ -77,6 +87,8 @@ class UserProvider with ChangeNotifier {
         points: profile['points'] ?? 0,
         isKycVerified: profile['isKycVerified'] ?? false,
         kycStatus: profile['kycStatus'],
+        email: profile['email'] ?? '',
+        phone: profile['phone'] ?? '',
       );
     } catch (e) {
       print('Error fetching user data: $e');
@@ -103,5 +115,18 @@ class UserProvider with ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  }
+
+  void updateUserData({String? name, String? email, String? phone}) {
+    if (name != null) {
+      _userData = _userData!.copyWith(name: name);
+    }
+    if (email != null) {
+      _userData = _userData!.copyWith(email: email);
+    }
+    if (phone != null) {
+      _userData = _userData!.copyWith(phone: phone);
+    }
+    notifyListeners();
   }
 }

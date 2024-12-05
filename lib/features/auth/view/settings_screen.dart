@@ -49,21 +49,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.person),
-                      title: const Text('Edit Profile'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        // TODO: Navigate to profile edit screen
-                      },
-                    ),
-                    ListTile(
                       leading: const Icon(Icons.lock),
                       title: const Text('Change Password'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        // TODO: Navigate to change password screen
+                        Navigator.pushNamed(context, '/changePassword');
                       },
                     ),
+                    // ListTile(
+                    //   leading: Icon(Icons.person),
+                    //   title: Text('Edit Profile'),
+                    //   onTap: () {
+                    //     Navigator.pushNamed(context, '/editProfile');
+                    //   },
+                    // ),
                   ],
                 ),
               ),

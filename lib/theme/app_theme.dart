@@ -4,7 +4,7 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    primaryColor: const Color(0xFF1E88E5),
+    primaryColor: const Color(0xFF6200EA), // Purple 500
     scaffoldBackgroundColor: Colors.white,
     cardTheme: CardTheme(
       color: Colors.white,
@@ -39,7 +39,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF1E88E5)),
+        borderSide: const BorderSide(color: Color(0xFF6200EA)),
       ),
     ),
   );
@@ -47,7 +47,7 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    primaryColor: const Color(0xFF90CAF9),
+    primaryColor: const Color(0xFFBB86FC), // Purple 200
     scaffoldBackgroundColor: const Color(0xFF121212),
     cardTheme: CardTheme(
       color: const Color(0xFF1E1E1E),
@@ -82,7 +82,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF90CAF9)),
+        borderSide: const BorderSide(color: Color(0xFFBB86FC)),
       ),
     ),
   );

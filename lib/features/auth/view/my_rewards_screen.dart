@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/reward.dart';
+import 'package:rhino_bond/models/reward.dart';
 
 class MyRewardsScreen extends StatelessWidget {
   final List<Reward> _myRewards = [
