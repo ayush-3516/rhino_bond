@@ -1,16 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'features/auth/view/dashboard_screen.dart';
-import 'features/auth/view/reward_products_screen.dart';
-import 'features/auth/view/qr_scanner_screen.dart';
-import 'features/auth/view/account_screen.dart';
-import 'features/auth/view/edit_profile_screen.dart';
-import 'features/auth/view/change_password_screen.dart';
-import 'theme/theme_provider.dart';
-import 'theme/app_theme.dart';
+import 'package:rhino_bond/features/auth/view/dashboard_screen.dart';
+import 'package:rhino_bond/features/auth/view/reward_products_screen.dart';
+import 'package:rhino_bond/features/auth/view/qr_scanner_screen.dart';
+import 'package:rhino_bond/features/auth/view/account_screen.dart';
+import 'package:rhino_bond/features/auth/view/edit_profile_screen.dart';
+import 'package:rhino_bond/features/auth/view/change_password_screen.dart';
+import 'package:rhino_bond/theme/theme_provider.dart';
+import 'package:rhino_bond/theme/app_theme.dart';
 import 'package:rhino_bond/providers/user_provider.dart';
+import 'package:rhino_bond/providers/language_provider.dart';
+import 'package:rhino_bond/config/app_localizations.dart';
+import 'package:rhino_bond/config/app_localizations_delegate.dart';
 
 void main() {
   runApp(
@@ -18,6 +22,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
       child: const MyApp(),
     ),
@@ -29,22 +34,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final platform = Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android;
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
 
-    return MaterialApp(
-      title: 'Rhino Bond',
-      theme: AppTheme.lightTheme.copyWith(platform: platform),
-      darkTheme: AppTheme.darkTheme.copyWith(platform: platform),
-      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const DashboardScreen(),
-        '/rewards': (context) => const RewardProductsScreen(),
-        '/scan': (context) => const QRScannerScreen(),
-        '/account': (context) => const AccountScreen(),
-        '/editProfile': (context) => EditProfileScreen(),
-        '/changePassword': (context) => ChangePasswordScreen(),
+    return Consumer2<ThemeProvider, LanguageProvider>(
+      builder: (context, themeProvider, languageProvider, child) {
+        return MaterialApp(
+          title: 'Rhino Bond',
+          theme: themeProvider.isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
+          locale: languageProvider.currentLocale,
+          supportedLocales: const [
+            Locale('en'),
+            Locale('gu'),
+            Locale('hi'),
+            Locale('mr'),
+            Locale('pa'),
+          ],
+          localizationsDelegates: const [
+            AppLocalizationsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const DashboardScreen(),
+            '/rewards': (context) => const RewardProductsScreen(),
+            '/scan': (context) => const QRScannerScreen(),
+            '/account': (context) => const AccountScreen(),
+            '/editProfile': (context) => EditProfileScreen(),
+            '/changePassword': (context) => ChangePasswordScreen(),
+          },
+        );
       },
     );
   }

@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:rhino_bond/appbar.dart';
 import 'package:rhino_bond/widgets/app_drawer.dart';
 import 'package:rhino_bond/theme/theme_provider.dart';
+import 'package:rhino_bond/providers/language_provider.dart';
+import 'package:rhino_bond/config/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -14,26 +16,18 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _notificationsEnabled = true;
-  bool _darkModeEnabled = true;
-  String _selectedLanguage = 'English';
   bool _biometricsEnabled = false;
-
-  final List<String> _languages = [
-    'English',
-    'Spanish',
-    'French',
-    'German',
-    'Chinese',
-  ];
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final appLocalizations = AppLocalizations.of(context);
     
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(
-        title: 'Settings',
+        title: appLocalizations?.settings ?? 'Settings',
         scaffoldKey: _scaffoldKey,
       ),
       endDrawer: const AppDrawer(),
@@ -44,32 +38,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Section
-              _buildSectionHeader('Profile Settings'),
+              _buildSectionHeader(appLocalizations?.profileSettings ?? 'Profile Settings'),
               Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: const Icon(Icons.lock),
-                      title: const Text('Change Password'),
+                      title: Text(appLocalizations?.changePassword ?? 'Change Password'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         Navigator.pushNamed(context, '/changePassword');
                       },
                     ),
-                    // ListTile(
-                    //   leading: Icon(Icons.person),
-                    //   title: Text('Edit Profile'),
-                    //   onTap: () {
-                    //     Navigator.pushNamed(context, '/editProfile');
-                    //   },
-                    // ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
 
               // App Settings Section
-              _buildSectionHeader('App Settings'),
+              _buildSectionHeader(appLocalizations?.appSettings ?? 'App Settings'),
               Card(
                 child: Column(
                   children: [
@@ -77,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       leading: Icon(
                         themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
                       ),
-                      title: const Text('Dark Mode'),
+                      title: Text(appLocalizations?.darkMode ?? 'Dark Mode'),
                       trailing: Switch(
                         value: themeProvider.isDarkMode,
                         onChanged: (value) {
@@ -87,8 +74,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     SwitchListTile(
                       secondary: const Icon(Icons.notifications),
-                      title: const Text('Push Notifications'),
-                      subtitle: const Text('Receive notifications about rewards and updates'),
+                      title: Text(appLocalizations?.pushNotifications ?? 'Push Notifications'),
+                      subtitle: Text(appLocalizations?.notificationsSubtitle ?? 'Receive notifications about rewards and updates'),
                       value: _notificationsEnabled,
                       onChanged: (bool value) {
                         setState(() {
@@ -98,12 +85,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     ListTile(
                       leading: const Icon(Icons.language),
-                      title: const Text('Language'),
-                      subtitle: Text(_selectedLanguage),
+                      title: Text(appLocalizations?.language ?? 'Language'),
+                      subtitle: Text(languageProvider.getCurrentLanguageName()),
                       trailing: DropdownButton<String>(
-                        value: _selectedLanguage,
+                        value: languageProvider.getCurrentLanguageName(),
                         underline: Container(),
-                        items: _languages.map((String language) {
+                        items: languageProvider.supportedLanguages.keys.map((String language) {
                           return DropdownMenuItem<String>(
                             value: language,
                             child: Text(language),
@@ -111,10 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }).toList(),
                         onChanged: (String? newValue) {
                           if (newValue != null) {
-                            setState(() {
-                              _selectedLanguage = newValue;
-                            });
-                            // TODO: Implement language switching
+                            languageProvider.setLanguage(newValue);
                           }
                         },
                       ),
@@ -125,25 +109,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // Security Section
-              _buildSectionHeader('Security'),
+              _buildSectionHeader(appLocalizations?.security ?? 'Security'),
               Card(
                 child: Column(
                   children: [
                     SwitchListTile(
                       secondary: const Icon(Icons.fingerprint),
-                      title: const Text('Biometric Authentication'),
-                      subtitle: const Text('Use fingerprint or face ID to login'),
+                      title: Text(appLocalizations?.biometricAuth ?? 'Biometric Authentication'),
+                      subtitle: Text(appLocalizations?.biometricAuthSubtitle ?? 'Use fingerprint or face ID to login'),
                       value: _biometricsEnabled,
                       onChanged: (bool value) {
                         setState(() {
                           _biometricsEnabled = value;
                         });
-                        // TODO: Implement biometric authentication
                       },
                     ),
                     ListTile(
                       leading: const Icon(Icons.security),
-                      title: const Text('Privacy Policy'),
+                      title: Text(appLocalizations?.privacyPolicy ?? 'Privacy Policy'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         // TODO: Navigate to privacy policy screen
@@ -151,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     ListTile(
                       leading: const Icon(Icons.description),
-                      title: const Text('Terms of Service'),
+                      title: Text(appLocalizations?.termsOfService ?? 'Terms of Service'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         // TODO: Navigate to terms of service screen
@@ -163,18 +146,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // About Section
-              _buildSectionHeader('About'),
+              _buildSectionHeader(appLocalizations?.about ?? 'About'),
               Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: const Icon(Icons.info),
-                      title: const Text('App Version'),
+                      title: Text(appLocalizations?.appVersion ?? 'App Version'),
                       trailing: const Text('1.0.0'),
                     ),
                     ListTile(
                       leading: const Icon(Icons.update),
-                      title: const Text('Check for Updates'),
+                      title: Text(appLocalizations?.checkForUpdates ?? 'Check for Updates'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         // TODO: Implement update check
@@ -194,18 +177,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: Theme.of(context).colorScheme.error,
                   ),
                   title: Text(
-                    'Delete Account',
+                    appLocalizations?.deleteAccount ?? 'Delete Account',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: const Text(
-                    'Permanently delete your account and all data',
+                  subtitle: Text(
+                    appLocalizations?.deleteAccountSubtitle ?? 'Permanently delete your account and all data',
                     style: TextStyle(color: Colors.grey),
                   ),
                   onTap: () {
-                    _showDeleteAccountDialog();
+                    _showDeleteAccountDialog(appLocalizations);
                   },
                 ),
               ),
@@ -230,26 +213,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _showDeleteAccountDialog() async {
+  Future<void> _showDeleteAccountDialog(AppLocalizations? appLocalizations) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Account'),
-          content: const Text(
-            'Are you sure you want to delete your account? This action cannot be undone.',
+          title: Text(appLocalizations?.deleteAccount ?? 'Delete Account'),
+          content: Text(
+            appLocalizations?.deleteAccountSubtitle ?? 'Are you sure you want to delete your account? This action cannot be undone.',
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(appLocalizations?.cancel ?? 'Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text(
-                'Delete',
+                appLocalizations?.delete ?? 'Delete',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.error,
                 ),

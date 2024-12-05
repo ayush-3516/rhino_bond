@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rhino_bond/providers/user_provider.dart';
 import 'package:rhino_bond/services/api_service.dart';
+import 'package:rhino_bond/config/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -24,10 +25,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _sendOtp() async {
+    final localizations = AppLocalizations.of(context);
     if (_phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter your phone number'),
+        SnackBar(
+          content: Text(localizations?.pleaseEnterPhoneNumber ?? 'Please enter your phone number'),
           backgroundColor: Colors.red,
         ),
       );
@@ -45,15 +47,15 @@ class _LoginScreenState extends State<LoginScreen> {
         _otpSent = true;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP sent successfully!'),
+        SnackBar(
+          content: Text(localizations?.otpSentSuccessfully ?? 'OTP sent successfully!'),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to send OTP: $e'),
+          content: Text(e.toString()),
           backgroundColor: Colors.red,
         ),
       );
@@ -65,10 +67,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
+    final localizations = AppLocalizations.of(context);
     if (_phoneController.text.isEmpty || _otpController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill in all fields'),
+        SnackBar(
+          content: Text(localizations?.pleaseFillInAllFields ?? 'Please fill in all fields'),
           backgroundColor: Colors.red,
         ),
       );
@@ -87,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login failed: $e'),
+          content: Text(e.toString()),
           backgroundColor: Colors.red,
         ),
       );
@@ -98,14 +101,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // TODO: Remove this method before production
-  void _bypassLogin() {
-    Navigator.pushReplacementNamed(context, '/dashboard');
-  }
-
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(localizations?.login ?? 'Login'),
+      ),
       body: Stack(
         children: [
           Container(
@@ -149,7 +152,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 8),
                           ElevatedButton(
-                            onPressed: _bypassLogin,
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, '/dashboard');
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.orange,
                               padding: const EdgeInsets.all(16),
@@ -172,9 +177,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.white,
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      'Welcome Back',
-                      style: TextStyle(
+                    Text(
+                      localizations?.welcomeBack ?? 'Welcome Back',
+                      style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -182,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to continue',
+                      localizations?.signInToContinue ?? 'Sign in to continue',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white.withOpacity(0.8),
@@ -210,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             keyboardType: TextInputType.phone,
                             style: const TextStyle(fontSize: 16),
                             decoration: InputDecoration(
-                              labelText: 'Phone Number',
+                              labelText: localizations?.phoneNumber ?? 'Phone Number',
                               prefixIcon: const Icon(Icons.phone),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -246,9 +251,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                         ),
                                       )
-                                    : const Text(
-                                        'Send OTP',
-                                        style: TextStyle(fontSize: 16),
+                                    : Text(
+                                        localizations?.sendOtp ?? 'Send OTP',
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                               ),
                             ),
@@ -258,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               keyboardType: TextInputType.number,
                               style: const TextStyle(fontSize: 16),
                               decoration: InputDecoration(
-                                labelText: 'OTP',
+                                labelText: localizations?.enterOtp ?? 'Enter OTP',
                                 prefixIcon: const Icon(Icons.lock),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -293,9 +298,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                         ),
                                       )
-                                    : const Text(
-                                        'Login',
-                                        style: TextStyle(fontSize: 16),
+                                    : Text(
+                                        localizations?.login ?? 'Login',
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                               ),
                             ),
@@ -308,7 +313,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                         _otpController.clear();
                                       });
                                     },
-                              child: const Text('Resend OTP'),
+                              child: Text(
+                                localizations?.resendOtp ?? 'Resend OTP',
+                                style: const TextStyle(fontSize: 16),
+                              ),
                             ),
                           ],
                         ],
@@ -319,7 +327,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Don\'t have an account? ',
+                          localizations?.dontHaveAnAccount ?? "Don't have an account? ",
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.8),
                           ),
@@ -328,9 +336,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/register');
                           },
-                          child: const Text(
-                            'Register',
-                            style: TextStyle(
+                          child: Text(
+                            localizations?.register ?? 'Register',
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
