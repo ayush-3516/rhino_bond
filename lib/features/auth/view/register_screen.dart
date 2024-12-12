@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
   bool _isLoading = false;
@@ -21,78 +22,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     _phoneController.dispose();
     _otpController.dispose();
     super.dispose();
-  }
-
-  Future<void> _sendOtp() async {
-    if (_phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter your phone number'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Implement the logic to send OTP here
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-      setState(() {
-        _otpSent = true;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP sent successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to send OTP: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final response = await ApiService.registerUser(_phoneController.text, _otpController.text);
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.setToken(response);
-      Navigator.pushReplacementNamed(context, '/dashboard');
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Registration failed: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   void _bypassRegister() {
@@ -204,8 +137,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Development Only - Bypass Button
-                            if (true) ... [ // TODO: Remove in production
-                              Container(
+                            if (true) ...[
+                              // TODO: Remove in production
+                              SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton(
                                   onPressed: _bypassRegister,
@@ -253,6 +187,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
                             TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: const TextStyle(fontSize: 16),
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                prefixIcon: const Icon(Icons.email),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                  ),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                if (!value.contains('@')) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
                               controller: _phoneController,
                               keyboardType: TextInputType.phone,
                               style: const TextStyle(fontSize: 16),
@@ -281,7 +243,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: _isLoading ? null : _sendOtp,
+                                  onPressed:
+                                      _isLoading ? null : _bypassRegister,
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(16),
                                     shape: RoundedRectangleBorder(
@@ -335,7 +298,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: _isLoading ? null : _register,
+                                  onPressed:
+                                      _isLoading ? null : _bypassRegister,
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(16),
                                     shape: RoundedRectangleBorder(

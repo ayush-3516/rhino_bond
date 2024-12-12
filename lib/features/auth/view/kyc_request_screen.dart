@@ -281,30 +281,26 @@ class _KycRequestScreenState extends State<KYCRequestScreen> {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
 
       try {
-        if (userProvider.token != null) {
-          await ApiService.submitKyc(
-            userProvider.token!,
-            {
-              'fullName': _fullName,
-              'idNumber': _idNumber,
-              'dateOfBirth': _dateOfBirth!.toIso8601String(),
-              'email': _email,
-              'phone': _phone,
-              'address': _address,
-            },
-          );
+        await ApiService.submitKyc(
+          userProvider.token,
+          {
+            'fullName': _fullName,
+            'idNumber': _idNumber,
+            'dateOfBirth': _dateOfBirth!.toIso8601String(),
+            'email': _email,
+            'phone': _phone,
+            'address': _address,
+          },
+        );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('KYC verification submitted successfully'),
-              backgroundColor: Colors.green,
-            ),
-          );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('KYC verification submitted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
 
-          Navigator.pop(context);
-        } else {
-          throw Exception('User not logged in');
-        }
+        Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

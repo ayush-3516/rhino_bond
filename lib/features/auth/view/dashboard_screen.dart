@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:rhino_bond/widgets/app_drawer.dart';
 import 'package:rhino_bond/appbar.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:flutter_carousel_widget/src/indicators/models/slide_indicator_options_model.dart';
 import 'package:rhino_bond/features/auth/view/rewards_history_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -52,7 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   elevation: 4,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, '/scan');
+                      Navigator.pushNamed(context, '/qrScanner');
                     },
                     child: Container(
                       width: double.infinity,
@@ -98,7 +97,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     viewportFraction: 0.95,
                     enlargeCenterPage: false,
                     autoPlayInterval: const Duration(seconds: 5),
-                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                    autoPlayAnimationDuration:
+                        const Duration(milliseconds: 800),
                     autoPlayCurve: Curves.fastOutSlowIn,
                   ),
                   items: _events.map((event) {
@@ -215,7 +215,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const RewardsHistoryScreen(),
+                                    builder: (context) =>
+                                        const RewardsHistoryScreen(),
                                   ),
                                 );
                               },
@@ -250,7 +251,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/rewards');
+                    Navigator.pushNamed(context, '/rewardProducts');
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),

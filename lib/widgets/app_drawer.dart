@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rhino_bond/features/auth/view/account_screen.dart';
 import 'package:rhino_bond/features/auth/view/contact_faq_screen.dart';
 import 'package:rhino_bond/features/auth/view/settings_screen.dart';
 import 'package:rhino_bond/features/auth/view/rewards_history_screen.dart';
+import 'package:rhino_bond/services/api_service.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -74,7 +76,8 @@ class AppDrawer extends StatelessWidget {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const RewardsHistoryScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const RewardsHistoryScreen()),
               );
             },
           ),
@@ -94,7 +97,8 @@ class AppDrawer extends StatelessWidget {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ContactFAQScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const ContactFAQScreen()),
               );
             },
           ),
@@ -112,9 +116,17 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
-            onTap: () {
-              // TODO: Implement logout logic
-              Navigator.pop(context);
+            onTap: () async {
+              try {
+                Navigator.pushReplacementNamed(context, '/login');
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error logging out: ${e.toString()}'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
           ),
         ],

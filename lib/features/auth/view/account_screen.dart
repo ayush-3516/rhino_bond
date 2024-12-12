@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:rhino_bond/config/app_localizations.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -48,9 +49,8 @@ class _AccountScreenState extends State<AccountScreen> {
           CircleAvatar(
             radius: 60,
             backgroundColor: Colors.grey[200],
-            backgroundImage: _profileImage != null
-                ? FileImage(_profileImage!)
-                : null,
+            backgroundImage:
+                _profileImage != null ? FileImage(_profileImage!) : null,
             child: _profileImage == null
                 ? const Icon(
                     Icons.person,
@@ -128,9 +128,11 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Account'),
+        title: Text(localizations?.myAccount ?? 'My Account'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -145,79 +147,88 @@ class _AccountScreenState extends State<AccountScreen> {
                 _buildProfileImage(),
                 const SizedBox(height: 32),
                 _buildTextField(
-                  label: 'Full Name',
+                  label: localizations?.fullName ?? 'Full Name',
                   icon: Icons.person_outline,
                   controller: _nameController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
+                      return localizations?.pleaseEnterName ??
+                          'Please enter your name';
                     }
                     return null;
                   },
                 ),
                 _buildTextField(
-                  label: 'Address',
+                  label: localizations?.address ?? 'Address',
                   icon: Icons.location_on_outlined,
                   controller: _addressController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your address';
+                      return localizations?.pleaseEnterAddress ??
+                          'Please enter your address';
                     }
                     return null;
                   },
                 ),
                 _buildTextField(
-                  label: 'Pincode',
+                  label: localizations?.pincode ?? 'Pincode',
                   icon: Icons.pin_drop_outlined,
                   controller: _pincodeController,
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your pincode';
+                      return localizations?.pleaseEnterPincode ??
+                          'Please enter your pincode';
                     }
                     if (value.length != 6) {
-                      return 'Pincode must be 6 digits';
+                      return localizations?.pincodeMustBe6Digits ??
+                          'Pincode must be 6 digits';
                     }
                     return null;
                   },
                 ),
                 _buildTextField(
-                  label: 'State',
+                  label: localizations?.state ?? 'State',
                   icon: Icons.map_outlined,
                   controller: _stateController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your state';
+                      return localizations?.pleaseEnterState ??
+                          'Please enter your state';
                     }
                     return null;
                   },
                 ),
                 _buildTextField(
-                  label: 'Email',
+                  label: localizations?.email ?? 'Email',
                   icon: Icons.email_outlined,
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return localizations?.pleaseEnterEmail ??
+                          'Please enter your email';
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return localizations?.pleaseEnterValidEmail ??
+                          'Please enter a valid email';
                     }
                     return null;
                   },
                 ),
                 _buildTextField(
-                  label: 'Phone Number',
+                  label: localizations?.phoneNumber ?? 'Phone Number',
                   icon: Icons.phone_outlined,
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
+                      return localizations?.pleaseEnterPhone ??
+                          'Please enter your phone number';
                     }
                     if (value.length != 10) {
-                      return 'Phone number must be 10 digits';
+                      return localizations?.phoneMustBe10Digits ??
+                          'Phone number must be 10 digits';
                     }
                     return null;
                   },
@@ -233,9 +244,9 @@ class _AccountScreenState extends State<AccountScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Save Profile',
-                      style: TextStyle(
+                    child: Text(
+                      localizations?.saveProfile ?? 'Save Profile',
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),

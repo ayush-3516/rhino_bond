@@ -132,7 +132,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Log Out'),
             onTap: () {
-              // TODO: Implement logout logic
+              // Implement logout logic
               Navigator.pushReplacementNamed(context, '/login');
             },
           ),

@@ -4,6 +4,8 @@ import 'package:rhino_bond/providers/user_provider.dart';
 import 'package:rhino_bond/services/api_service.dart';
 
 class RewardsCatalogScreen extends StatefulWidget {
+  const RewardsCatalogScreen({Key? key}) : super(key: key);
+
   @override
   _RewardsCatalogScreenState createState() => _RewardsCatalogScreenState();
 }
@@ -37,7 +39,7 @@ class _RewardsCatalogScreenState extends State<RewardsCatalogScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rewards Catalog'),
+        title: const Text('Rewards Catalog'),
       ),
       body: ListView.builder(
         itemCount: _rewards.length,

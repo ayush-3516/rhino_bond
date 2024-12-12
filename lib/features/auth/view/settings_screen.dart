@@ -23,7 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final languageProvider = Provider.of<LanguageProvider>(context);
     final appLocalizations = AppLocalizations.of(context);
-    
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(
@@ -38,13 +38,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Section
-              _buildSectionHeader(appLocalizations?.profileSettings ?? 'Profile Settings'),
+              _buildSectionHeader(
+                  appLocalizations?.profileSettings ?? 'Profile Settings'),
               Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: const Icon(Icons.lock),
-                      title: Text(appLocalizations?.changePassword ?? 'Change Password'),
+                      title: Text(appLocalizations?.changePassword ??
+                          'Change Password'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         Navigator.pushNamed(context, '/changePassword');
@@ -56,13 +58,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 24),
 
               // App Settings Section
-              _buildSectionHeader(appLocalizations?.appSettings ?? 'App Settings'),
+              _buildSectionHeader(
+                  appLocalizations?.appSettings ?? 'App Settings'),
               Card(
                 child: Column(
                   children: [
                     ListTile(
                       leading: Icon(
-                        themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                        themeProvider.isDarkMode
+                            ? Icons.dark_mode
+                            : Icons.light_mode,
                       ),
                       title: Text(appLocalizations?.darkMode ?? 'Dark Mode'),
                       trailing: Switch(
@@ -74,8 +79,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     SwitchListTile(
                       secondary: const Icon(Icons.notifications),
-                      title: Text(appLocalizations?.pushNotifications ?? 'Push Notifications'),
-                      subtitle: Text(appLocalizations?.notificationsSubtitle ?? 'Receive notifications about rewards and updates'),
+                      title: Text(appLocalizations?.pushNotifications ??
+                          'Push Notifications'),
+                      subtitle: Text(appLocalizations?.notificationsSubtitle ??
+                          'Receive notifications about rewards and updates'),
                       value: _notificationsEnabled,
                       onChanged: (bool value) {
                         setState(() {
@@ -90,7 +97,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       trailing: DropdownButton<String>(
                         value: languageProvider.getCurrentLanguageName(),
                         underline: Container(),
-                        items: languageProvider.supportedLanguages.keys.map((String language) {
+                        items: languageProvider.supportedLanguages.keys
+                            .map((String language) {
                           return DropdownMenuItem<String>(
                             value: language,
                             child: Text(language),
@@ -115,8 +123,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     SwitchListTile(
                       secondary: const Icon(Icons.fingerprint),
-                      title: Text(appLocalizations?.biometricAuth ?? 'Biometric Authentication'),
-                      subtitle: Text(appLocalizations?.biometricAuthSubtitle ?? 'Use fingerprint or face ID to login'),
+                      title: Text(appLocalizations?.biometricAuth ??
+                          'Biometric Authentication'),
+                      subtitle: Text(appLocalizations?.biometricAuthSubtitle ??
+                          'Use fingerprint or face ID to login'),
                       value: _biometricsEnabled,
                       onChanged: (bool value) {
                         setState(() {
@@ -126,7 +136,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     ListTile(
                       leading: const Icon(Icons.security),
-                      title: Text(appLocalizations?.privacyPolicy ?? 'Privacy Policy'),
+                      title: Text(
+                          appLocalizations?.privacyPolicy ?? 'Privacy Policy'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         // TODO: Navigate to privacy policy screen
@@ -134,7 +145,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     ListTile(
                       leading: const Icon(Icons.description),
-                      title: Text(appLocalizations?.termsOfService ?? 'Terms of Service'),
+                      title: Text(appLocalizations?.termsOfService ??
+                          'Terms of Service'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         // TODO: Navigate to terms of service screen
@@ -152,12 +164,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.info),
-                      title: Text(appLocalizations?.appVersion ?? 'App Version'),
+                      title:
+                          Text(appLocalizations?.appVersion ?? 'App Version'),
                       trailing: const Text('1.0.0'),
                     ),
                     ListTile(
                       leading: const Icon(Icons.update),
-                      title: Text(appLocalizations?.checkForUpdates ?? 'Check for Updates'),
+                      title: Text(appLocalizations?.checkForUpdates ??
+                          'Check for Updates'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
                         // TODO: Implement update check
@@ -184,8 +198,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   subtitle: Text(
-                    appLocalizations?.deleteAccountSubtitle ?? 'Permanently delete your account and all data',
-                    style: TextStyle(color: Colors.grey),
+                    appLocalizations?.deleteAccountSubtitle ??
+                        'Permanently delete your account and all data',
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   onTap: () {
                     _showDeleteAccountDialog(appLocalizations);
@@ -213,7 +228,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _showDeleteAccountDialog(AppLocalizations? appLocalizations) async {
+  Future<void> _showDeleteAccountDialog(
+      AppLocalizations? appLocalizations) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -221,7 +237,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return AlertDialog(
           title: Text(appLocalizations?.deleteAccount ?? 'Delete Account'),
           content: Text(
-            appLocalizations?.deleteAccountSubtitle ?? 'Are you sure you want to delete your account? This action cannot be undone.',
+            appLocalizations?.deleteAccountSubtitle ??
+                'Are you sure you want to delete your account? This action cannot be undone.',
           ),
           actions: <Widget>[
             TextButton(

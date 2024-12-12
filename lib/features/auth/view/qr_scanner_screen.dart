@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:rhino_bond/widgets/scanner_overlay.dart';
 import 'package:rhino_bond/appbar.dart';
 import 'package:rhino_bond/widgets/app_drawer.dart';
 
@@ -208,7 +207,8 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.send, color: Colors.white, size: 20),
+                            icon: const Icon(Icons.send,
+                                color: Colors.white, size: 20),
                             onPressed: _submitManualCode,
                           ),
                         ),

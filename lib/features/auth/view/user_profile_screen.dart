@@ -4,6 +4,8 @@ import 'package:rhino_bond/providers/user_provider.dart';
 import 'package:rhino_bond/services/api_service.dart';
 
 class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({Key? key}) : super(key: key);
+
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
 }
@@ -40,7 +42,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     try {
       await ApiService.updateUserProfile(token, _userProfile);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User profile updated successfully')),
+        const SnackBar(content: Text('User profile updated successfully')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -53,14 +55,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile'),
+        title: const Text('User Profile'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
-              decoration: InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(labelText: 'Name'),
               onChanged: (value) {
                 setState(() {
                   _userProfile['name'] = value;
@@ -68,17 +70,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               },
             ),
             TextField(
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
               onChanged: (value) {
                 setState(() {
                   _userProfile['email'] = value;
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _updateUserProfile,
-              child: Text('Update Profile'),
+              child: const Text('Update Profile'),
             ),
           ],
         ),

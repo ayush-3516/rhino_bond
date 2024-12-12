@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:rhino_bond/models/reward.dart';
 import 'package:rhino_bond/widgets/reward_card.dart';
@@ -16,8 +15,16 @@ class RewardProductsScreen extends StatefulWidget {
 class _RewardProductsScreenState extends State<RewardProductsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String _selectedCategory = 'All';
-  final List<String> _categories = ['All', 'Electronics', 'Fashion', 'Food', 'Travel', 'Entertainment', 'Wellness'];
-  
+  final List<String> _categories = [
+    'All',
+    'Electronics',
+    'Fashion',
+    'Food',
+    'Travel',
+    'Entertainment',
+    'Wellness'
+  ];
+
   // TODO: Replace with actual data from API
   final List<Reward> _rewards = [
     Reward(
@@ -74,7 +81,9 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
     if (_selectedCategory == 'All') {
       return _rewards;
     }
-    return _rewards.where((reward) => reward.category == _selectedCategory).toList();
+    return _rewards
+        .where((reward) => reward.category == _selectedCategory)
+        .toList();
   }
 
   @override
@@ -145,7 +154,7 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.pushNamed(context, '/scan');
+          Navigator.pushNamed(context, '/qrScanner');
         },
         icon: const Icon(Icons.qr_code_scanner),
         label: const Text('Scan QR'),

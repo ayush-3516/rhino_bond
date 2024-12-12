@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rhino_bond/providers/user_provider.dart';
-import 'package:rhino_bond/services/api_service.dart';
+import 'package:rhino_bond/services/auth/auth_service.dart';
 import 'package:rhino_bond/config/app_localizations.dart';
+import 'package:rhino_bond/base/utils/auth_validators.dart';
+import 'package:rhino_bond/base/utils/auth_constants.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -26,10 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _sendOtp() async {
     final localizations = AppLocalizations.of(context);
-    if (_phoneController.text.isEmpty) {
+    final phoneNumber = _phoneController.text;
+    
+    final validationError = AuthValidators.validatePhoneNumber(phoneNumber);
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizations?.pleaseEnterPhoneNumber ?? 'Please enter your phone number'),
+          content: Text(validationError),
           backgroundColor: Colors.red,
         ),
       );
@@ -41,14 +46,14 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // Implement the logic to send OTP here
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      final formattedPhone = AuthValidators.formatPhoneNumber(phoneNumber);
+      await AuthService().signInWithPhone(formattedPhone);
       setState(() {
         _otpSent = true;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizations?.otpSentSuccessfully ?? 'OTP sent successfully!'),
+          content: Text(localizations?.otpSentSuccessfully ?? AuthConstants.otpSent),
           backgroundColor: Colors.green,
         ),
       );
@@ -68,10 +73,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     final localizations = AppLocalizations.of(context);
-    if (_phoneController.text.isEmpty || _otpController.text.isEmpty) {
+    final phoneNumber = _phoneController.text;
+    final otp = _otpController.text;
+
+    final phoneValidation = AuthValidators.validatePhoneNumber(phoneNumber);
+    final otpValidation = AuthValidators.validateOtp(otp);
+
+    if (phoneValidation != null || otpValidation != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizations?.pleaseFillInAllFields ?? 'Please fill in all fields'),
+          content: Text(phoneValidation ?? otpValidation ?? AuthConstants.invalidOtp),
           backgroundColor: Colors.red,
         ),
       );
@@ -83,10 +94,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final response = await ApiService.login(_phoneController.text, _otpController.text);
+      final formattedPhone = AuthValidators.formatPhoneNumber(phoneNumber);
+      await AuthService().verifyOTP(formattedPhone, otp);
+      
       final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.setToken(response);
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      // Get current user from AuthService
+      final currentUser = AuthService().currentUser;
+      if (currentUser != null) {
+        userProvider.setToken(currentUser.id); // Using user ID as token
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
