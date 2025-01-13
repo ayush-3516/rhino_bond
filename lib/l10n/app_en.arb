@@ -1,0 +1,199 @@
+{
+  "@@locale": "en",
+  "appTitle": "Rhino Bond",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title for Settings screen"
+  },
+  "profileSettings": "Profile Settings",
+  "@profileSettings": {
+    "description": "Section header for profile settings"
+  },
+  "appSettings": "App Settings",
+  "@appSettings": {
+    "description": "Section header for app settings"
+  },
+  "security": "Security",
+  "@security": {
+    "description": "Section header for security settings"
+  },
+  "about": "About",
+  "@about": {
+    "description": "Section header for about section"
+  },
+  "changePassword": "Change Password",
+  "@changePassword": {
+    "description": "Menu item for changing password"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Menu item for dark mode setting"
+  },
+  "pushNotifications": "Push Notifications",
+  "@pushNotifications": {
+    "description": "Menu item for push notifications setting"
+  },
+  "notificationsDescription": "Receive notifications about rewards and updates",
+  "@notificationsDescription": {
+    "description": "Description for push notifications"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Menu item for language setting"
+  },
+  "biometricAuthentication": "Biometric Authentication",
+  "@biometricAuthentication": {
+    "description": "Menu item for biometric authentication"
+  },
+  "biometricDescription": "Use fingerprint or face ID to login",
+  "@biometricDescription": {
+    "description": "Description for biometric authentication"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Menu item for privacy policy"
+  },
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Menu item for terms of service"
+  },
+  "appVersion": "App Version",
+  "@appVersion": {
+    "description": "Menu item for app version"
+  },
+  "checkForUpdates": "Check for Updates",
+  "@checkForUpdates": {
+    "description": "Menu item for checking updates"
+  },
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Menu item for deleting account"
+  },
+  "deleteAccountDescription": "Permanently delete your account and all data",
+  "@deleteAccountDescription": {
+    "description": "Description for deleting account"
+  },
+  "deleteAccountConfirmation": "Are you sure you want to delete your account? This action cannot be undone.",
+  "@deleteAccountConfirmation": {
+    "description": "Confirmation message for deleting account"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "gujarati": "Gujarati",
+  "@gujarati": {
+    "description": "Gujarati language option"
+  },
+  "hindi": "Hindi",
+  "@hindi": {
+    "description": "Hindi language option"
+  },
+  "marathi": "Marathi",
+  "@marathi": {
+    "description": "Marathi language option"
+  },
+  "punjabi": "Punjabi",
+  "@punjabi": {
+    "description": "Punjabi language option"
+  },
+  "contactFAQTitle": "Contact & FAQ",
+  "@contactFAQTitle": {
+    "description": "Title for Contact & FAQ screen"
+  },
+  "getInTouch": "Get in Touch",
+  "@getInTouch": {
+    "description": "Section title for contact information"
+  },
+  "sendMessageTitle": "Send us a Message",
+  "@sendMessageTitle": {
+    "description": "Section title for contact form"
+  },
+  "emailLabel": "Email",
+  "@emailLabel": {
+    "description": "Label for email field"
+  },
+  "phoneLabel": "Phone",
+  "@phoneLabel": {
+    "description": "Label for phone field"
+  },
+  "addressLabel": "Address",
+  "@addressLabel": {
+    "description": "Label for address field"
+  },
+  "nameLabel": "Name",
+  "@nameLabel": {
+    "description": "Label for name field"
+  },
+  "topicLabel": "Topic",
+  "@topicLabel": {
+    "description": "Label for topic dropdown"
+  },
+  "messageLabel": "Message",
+  "@messageLabel": {
+    "description": "Label for message field"
+  },
+  "nameValidation": "Please enter your name",
+  "@nameValidation": {
+    "description": "Validation message for name field"
+  },
+  "emailValidation": "Please enter your email",
+  "@emailValidation": {
+    "description": "Validation message for email field"
+  },
+  "emailFormatValidation": "Please enter a valid email",
+  "@emailFormatValidation": {
+    "description": "Validation message for email format"
+  },
+  "messageValidation": "Please enter your message",
+  "@messageValidation": {
+    "description": "Validation message for message field"
+  },
+  "sendButton": "Send Message",
+  "@sendButton": {
+    "description": "Text for send button"
+  },
+  "messageSent": "Message sent successfully!",
+  "@messageSent": {
+    "description": "Success message after form submission"
+  },
+  "generalInquiry": "General Inquiry",
+  "@generalInquiry": {
+    "description": "General inquiry topic option"
+  },
+  "technicalSupport": "Technical Support",
+  "@technicalSupport": {
+    "description": "Technical support topic option"
+  },
+  "accountIssues": "Account Issues",
+  "@accountIssues": {
+    "description": "Account issues topic option"
+  },
+  "rewardsProgram": "Rewards Program",
+  "@rewardsProgram": {
+    "description": "Rewards program topic option"
+  },
+  "otherTopic": "Other",
+  "@otherTopic": {
+    "description": "Other topic option"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home menu item"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout menu item"
+  }
+}

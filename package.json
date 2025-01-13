@@ -1,0 +1,16 @@
+{
+  "name": "rhino_bond",
+  "version": "1.0.0",
+  "description": "To implement QR codes in your app for the described use case, you should follow a structured approach that ensures security, usability, and seamless integration with your database. Here's what you need to do:",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

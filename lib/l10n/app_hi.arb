@@ -1,0 +1,187 @@
+{
+  "@@locale": "hi",
+  "appTitle": "राइनो बॉन्ड",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "settingsTitle": "सेटिंग्स",
+  "@settingsTitle": {
+    "description": "Title for Settings screen"
+  },
+  "profileSettings": "प्रोफाइल सेटिंग्स",
+  "@profileSettings": {
+    "description": "Section header for profile settings"
+  },
+  "appSettings": "ऐप सेटिंग्स",
+  "@appSettings": {
+    "description": "Section header for app settings"
+  },
+  "security": "सुरक्षा",
+  "@security": {
+    "description": "Section header for security settings"
+  },
+  "about": "के बारे में",
+  "@about": {
+    "description": "Section header for about section"
+  },
+  "changePassword": "पासवर्ड बदलें",
+  "@changePassword": {
+    "description": "Menu item for changing password"
+  },
+  "darkMode": "डार्क मोड",
+  "@darkMode": {
+    "description": "Menu item for dark mode setting"
+  },
+  "pushNotifications": "पुश नोटिफिकेशन",
+  "@pushNotifications": {
+    "description": "Menu item for push notifications setting"
+  },
+  "notificationsDescription": "पुरस्कार और अपडेट के बारे में सूचनाएं प्राप्त करें",
+  "@notificationsDescription": {
+    "description": "Description for push notifications"
+  },
+  "language": "भाषा",
+  "@language": {
+    "description": "Menu item for language setting"
+  },
+  "biometricAuthentication": "बायोमेट्रिक प्रमाणीकरण",
+  "@biometricAuthentication": {
+    "description": "Menu item for biometric authentication"
+  },
+  "biometricDescription": "लॉगिन करने के लिए फिंगरप्रिंट या फेस आईडी का उपयोग करें",
+  "@biometricDescription": {
+    "description": "Description for biometric authentication"
+  },
+  "privacyPolicy": "गोपनीयता नीति",
+  "@privacyPolicy": {
+    "description": "Menu item for privacy policy"
+  },
+  "termsOfService": "सेवा की शर्तें",
+  "@termsOfService": {
+    "description": "Menu item for terms of service"
+  },
+  "appVersion": "ऐप संस्करण",
+  "@appVersion": {
+    "description": "Menu item for app version"
+  },
+  "checkForUpdates": "अपडेट के लिए जांचें",
+  "@checkForUpdates": {
+    "description": "Menu item for checking updates"
+  },
+  "deleteAccount": "खाता हटाएं",
+  "@deleteAccount": {
+    "description": "Menu item for deleting account"
+  },
+  "deleteAccountDescription": "अपना खाता और सभी डेटा स्थायी रूप से हटाएं",
+  "@deleteAccountDescription": {
+    "description": "Description for deleting account"
+  },
+  "deleteAccountConfirmation": "क्या आप वाकई अपना खाता हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता है।",
+  "@deleteAccountConfirmation": {
+    "description": "Confirmation message for deleting account"
+  },
+  "cancel": "रद्द करें",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "delete": "हटाएं",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "english": "अंग्रेजी",
+  "@english": {
+    "description": "English language option"
+  },
+  "hindi": "हिंदी",
+  "@hindi": {
+    "description": "Hindi language option"
+  },
+  "marathi": "मराठी",
+  "@marathi": {
+    "description": "Marathi language option"
+  },
+  "punjabi": "पंजाबी",
+  "@punjabi": {
+    "description": "Punjabi language option"
+  },
+  "contactFAQTitle": "संपर्क और FAQ",
+  "@contactFAQTitle": {
+    "description": "Title for Contact & FAQ screen"
+  },
+  "getInTouch": "संपर्क करें",
+  "@getInTouch": {
+    "description": "Section title for contact information"
+  },
+  "sendMessageTitle": "हमें संदेश भेजें",
+  "@sendMessageTitle": {
+    "description": "Section title for contact form"
+  },
+  "emailLabel": "ईमेल",
+  "@emailLabel": {
+    "description": "Label for email field"
+  },
+  "phoneLabel": "फोन",
+  "@phoneLabel": {
+    "description": "Label for phone field"
+  },
+  "addressLabel": "पता",
+  "@addressLabel": {
+    "description": "Label for address field"
+  },
+  "nameLabel": "नाम",
+  "@nameLabel": {
+    "description": "Label for name field"
+  },
+  "topicLabel": "विषय",
+  "@topicLabel": {
+    "description": "Label for topic dropdown"
+  },
+  "messageLabel": "संदेश",
+  "@messageLabel": {
+    "description": "Label for message field"
+  },
+  "nameValidation": "कृपया अपना नाम दर्ज करें",
+  "@nameValidation": {
+    "description": "Validation message for name field"
+  },
+  "emailValidation": "कृपया अपना ईमेल दर्ज करें",
+  "@emailValidation": {
+    "description": "Validation message for email field"
+  },
+  "emailFormatValidation": "कृपया एक मान्य ईमेल दर्ज करें",
+  "@emailFormatValidation": {
+    "description": "Validation message for email format"
+  },
+  "messageValidation": "कृपया अपना संदेश दर्ज करें",
+  "@messageValidation": {
+    "description": "Validation message for message field"
+  },
+  "sendButton": "संदेश भेजें",
+  "@sendButton": {
+    "description": "Text for send button"
+  },
+  "messageSent": "संदेश सफलतापूर्वक भेजा गया!",
+  "@messageSent": {
+    "description": "Success message after form submission"
+  },
+  "generalInquiry": "सामान्य जानकारी",
+  "@generalInquiry": {
+    "description": "General inquiry topic option"
+  },
+  "technicalSupport": "तकनीकी सहायता",
+  "@technicalSupport": {
+    "description": "Technical support topic option"
+  },
+  "accountIssues": "खाता समस्याएं",
+  "@accountIssues": {
+    "description": "Account issues topic option"
+  },
+  "rewardsProgram": "पुरस्कार कार्यक्रम",
+  "@rewardsProgram": {
+    "description": "Rewards program topic option"
+  },
+  "otherTopic": "अन्य",
+  "@otherTopic": {
+    "description": "Other topic option"
+  }
+}

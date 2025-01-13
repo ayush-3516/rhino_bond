@@ -1,0 +1,187 @@
+{
+  "@@locale": "pa",
+  "appTitle": "ਰਾਈਨੋ ਬਾਂਡ",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "settingsTitle": "ਸੈਟਿੰਗਜ਼",
+  "@settingsTitle": {
+    "description": "Title for Settings screen"
+  },
+  "profileSettings": "ਪ੍ਰੋਫਾਈਲ ਸੈਟਿੰਗਜ਼",
+  "@profileSettings": {
+    "description": "Section header for profile settings"
+  },
+  "appSettings": "ਐਪ ਸੈਟਿੰਗਜ਼",
+  "@appSettings": {
+    "description": "Section header for app settings"
+  },
+  "security": "ਸੁਰੱਖਿਆ",
+  "@security": {
+    "description": "Section header for security settings"
+  },
+  "about": "ਬਾਰੇ",
+  "@about": {
+    "description": "Section header for about section"
+  },
+  "changePassword": "ਪਾਸਵਰਡ ਬਦਲੋ",
+  "@changePassword": {
+    "description": "Menu item for changing password"
+  },
+  "darkMode": "ਡਾਰਕ ਮੋਡ",
+  "@darkMode": {
+    "description": "Menu item for dark mode setting"
+  },
+  "pushNotifications": "ਪੁਸ਼ ਨੋਟੀਫਿਕੇਸ਼ਨਾਂ",
+  "@pushNotifications": {
+    "description": "Menu item for push notifications setting"
+  },
+  "notificationsDescription": "ਇਨਾਮ ਅਤੇ ਅਪਡੇਟਸ ਬਾਰੇ ਨੋਟੀਫਿਕੇਸ਼ਨਾਂ ਪ੍ਰਾਪਤ ਕਰੋ",
+  "@notificationsDescription": {
+    "description": "Description for push notifications"
+  },
+  "language": "ਭਾਸ਼ਾ",
+  "@language": {
+    "description": "Menu item for language setting"
+  },
+  "biometricAuthentication": "ਬਾਇਓਮੈਟ੍ਰਿਕ ਪ੍ਰਮਾਣੀਕਰਨ",
+  "@biometricAuthentication": {
+    "description": "Menu item for biometric authentication"
+  },
+  "biometricDescription": "ਲੌਗਇਨ ਕਰਨ ਲਈ ਫਿੰਗਰਪ੍ਰਿੰਟ ਜਾਂ ਫੇਸ ਆਈਡੀ ਦੀ ਵਰਤੋਂ ਕਰੋ",
+  "@biometricDescription": {
+    "description": "Description for biometric authentication"
+  },
+  "privacyPolicy": "ਪਰਾਈਵੇਸੀ ਨੀਤੀ",
+  "@privacyPolicy": {
+    "description": "Menu item for privacy policy"
+  },
+  "termsOfService": "ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ",
+  "@termsOfService": {
+    "description": "Menu item for terms of service"
+  },
+  "appVersion": "ਐਪ ਵਰਜ਼ਨ",
+  "@appVersion": {
+    "description": "Menu item for app version"
+  },
+  "checkForUpdates": "ਅਪਡੇਟਸ ਲਈ ਜਾਂਚ ਕਰੋ",
+  "@checkForUpdates": {
+    "description": "Menu item for checking updates"
+  },
+  "deleteAccount": "ਖਾਤਾ ਮਿਟਾਓ",
+  "@deleteAccount": {
+    "description": "Menu item for deleting account"
+  },
+  "deleteAccountDescription": "ਆਪਣੇ ਖਾਤੇ ਅਤੇ ਸਾਰੇ ਡੇਟਾ ਨੂੰ ਸਥਾਈ ਰੂਪ ਵਿੱਚ ਮਿਟਾਓ",
+  "@deleteAccountDescription": {
+    "description": "Description for deleting account"
+  },
+  "deleteAccountConfirmation": "ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਆਪਣਾ ਖਾਤਾ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ? ਇਸ ਕਾਰਵਾਈ ਨੂੰ ਵਾਪਸ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ।",
+  "@deleteAccountConfirmation": {
+    "description": "Confirmation message for deleting account"
+  },
+  "cancel": "ਰੱਦ ਕਰੋ",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "delete": "ਮਿਟਾਓ",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "english": "ਅੰਗਰੇਜ਼ੀ",
+  "@english": {
+    "description": "English language option"
+  },
+  "hindi": "ਹਿੰਦੀ",
+  "@hindi": {
+    "description": "Hindi language option"
+  },
+  "marathi": "ਮਰਾਠੀ",
+  "@marathi": {
+    "description": "Marathi language option"
+  },
+  "punjabi": "ਪੰਜਾਬੀ",
+  "@punjabi": {
+    "description": "Punjabi language option"
+  },
+  "contactFAQTitle": "ਸੰਪਰਕ ਅਤੇ FAQ",
+  "@contactFAQTitle": {
+    "description": "Title for Contact & FAQ screen"
+  },
+  "getInTouch": "ਸੰਪਰਕ ਕਰੋ",
+  "@getInTouch": {
+    "description": "Section title for contact information"
+  },
+  "sendMessageTitle": "ਸਾਨੂੰ ਸੁਨੇਹਾ ਭੇਜੋ",
+  "@sendMessageTitle": {
+    "description": "Section title for contact form"
+  },
+  "emailLabel": "ਈਮੇਲ",
+  "@emailLabel": {
+    "description": "Label for email field"
+  },
+  "phoneLabel": "ਫੋਨ",
+  "@phoneLabel": {
+    "description": "Label for phone field"
+  },
+  "addressLabel": "ਪਤਾ",
+  "@addressLabel": {
+    "description": "Label for address field"
+  },
+  "nameLabel": "ਨਾਮ",
+  "@nameLabel": {
+    "description": "Label for name field"
+  },
+  "topicLabel": "ਵਿਸ਼ਾ",
+  "@topicLabel": {
+    "description": "Label for topic dropdown"
+  },
+  "messageLabel": "ਸੁਨੇਹਾ",
+  "@messageLabel": {
+    "description": "Label for message field"
+  },
+  "nameValidation": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+  "@nameValidation": {
+    "description": "Validation message for name field"
+  },
+  "emailValidation": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਈਮੇਲ ਦਰਜ ਕਰੋ",
+  "@emailValidation": {
+    "description": "Validation message for email field"
+  },
+  "emailFormatValidation": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਈਮੇਲ ਦਰਜ ਕਰੋ",
+  "@emailFormatValidation": {
+    "description": "Validation message for email format"
+  },
+  "messageValidation": "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸੁਨੇਹਾ ਦਰਜ ਕਰੋ",
+  "@messageValidation": {
+    "description": "Validation message for message field"
+  },
+  "sendButton": "ਸੁਨੇਹਾ ਭੇਜੋ",
+  "@sendButton": {
+    "description": "Text for send button"
+  },
+  "messageSent": "ਸੁਨੇਹਾ ਸਫਲਤਾਪੂਰਵਕ ਭੇਜਿਆ ਗਿਆ!",
+  "@messageSent": {
+    "description": "Success message after form submission"
+  },
+  "generalInquiry": "ਆਮ ਪੁੱਛਗਿੱਛ",
+  "@generalInquiry": {
+    "description": "General inquiry topic option"
+  },
+  "technicalSupport": "ਤਕਨੀਕੀ ਸਹਾਇਤਾ",
+  "@technicalSupport": {
+    "description": "Technical support topic option"
+  },
+  "accountIssues": "ਖਾਤਾ ਸਮੱਸਿਆਵਾਂ",
+  "@accountIssues": {
+    "description": "Account issues topic option"
+  },
+  "rewardsProgram": "ਇਨਾਮ ਪ੍ਰੋਗਰਾਮ",
+  "@rewardsProgram": {
+    "description": "Rewards program topic option"
+  },
+  "otherTopic": "ਹੋਰ",
+  "@otherTopic": {
+    "description": "Other topic option"
+  }
+}
