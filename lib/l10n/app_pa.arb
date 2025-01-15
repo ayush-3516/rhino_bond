@@ -183,5 +183,9 @@
   "otherTopic": "ਹੋਰ",
   "@otherTopic": {
     "description": "Other topic option"
+  },
+  "termsOfServiceContent": "ਇਹ ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ ਸਾਡੀਆਂ ਸੇਵਾਵਾਂ ਦੀ ਵਰਤੋਂ ਕਰਨ ਦੇ ਨਿਯਮਾਂ ਅਤੇ ਸ਼ਰਤਾਂ ਦਾ ਵਰਣਨ ਕਰਦੀਆਂ ਹਨ। ਕਿਰਪਾ ਕਰਕੇ ਇਹਨਾਂ ਸ਼ਰਤਾਂ ਨੂੰ ਧਿਆਨ ਨਾਲ ਪੜ੍ਹੋ। ਸਾਡੀਆਂ ਸੇਵਾਵਾਂ ਦੀ ਵਰਤੋਂ ਕਰਕੇ, ਤੁਸੀਂ ਇਹਨਾਂ ਸ਼ਰਤਾਂ ਨੂੰ ਮੰਨਦੇ ਹੋ।",
+  "@termsOfServiceContent": {
+    "description": "Content for terms of service screen"
   }
 }

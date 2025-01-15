@@ -47,49 +47,44 @@ class _AppState extends State<App> {
         ...AppProviders.providers,
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
-      child: Builder(
-        builder: (context) {
-          return Consumer<ThemeProvider>(
-            builder: (context, themeProvider, child) {
-              return Consumer<LanguageProvider>(
-                builder: (context, languageProvider, child) {
-                  return MaterialApp(
-                    navigatorKey: navigatorKey,
-                    initialRoute: AppRoutes.initialRoute,
-                    routes: routes,
-                    theme: themeProvider.themeData,
-                    localizationsDelegates: [
-                      const AppLocalizationsDelegate(),
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: const [
-                      Locale('en'), // English
-                      Locale('gu'), // Gujarati
-                      Locale('hi'), // Hindi
-                      Locale('mr'), // Marathi
-                      Locale('pa'), // Punjabi
-                    ],
-                    locale: languageProvider.locale,
-                    localeResolutionCallback: (locale, supportedLocales) {
-                      for (var supportedLocale in supportedLocales) {
-                        if (supportedLocale.languageCode ==
-                            locale?.languageCode) {
-                          return supportedLocale;
-                        }
-                      }
-                      return supportedLocales.first;
-                    },
-                    onGenerateRoute: (settings) {
-                      return MaterialPageRoute(
-                        builder: (context) => Scaffold(
-                          body: Center(
-                            child: Text(AppLocalizations.of(context).appTitle),
-                          ),
-                        ),
-                      );
-                    },
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return Consumer<LanguageProvider>(
+            builder: (context, languageProvider, child) {
+              return MaterialApp(
+                navigatorKey: navigatorKey,
+                initialRoute: AppRoutes.initialRoute,
+                routes: routes,
+                theme: themeProvider.themeData,
+                localizationsDelegates: [
+                  const AppLocalizationsDelegate(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: const [
+                  Locale('en'), // English
+                  Locale('gu'), // Gujarati
+                  Locale('hi'), // Hindi
+                  Locale('mr'), // Marathi
+                  Locale('pa'), // Punjabi
+                ],
+                locale: languageProvider.locale,
+                localeResolutionCallback: (locale, supportedLocales) {
+                  for (var supportedLocale in supportedLocales) {
+                    if (supportedLocale.languageCode == locale?.languageCode) {
+                      return supportedLocale;
+                    }
+                  }
+                  return supportedLocales.first;
+                },
+                onGenerateRoute: (settings) {
+                  return MaterialPageRoute(
+                    builder: (context) => Scaffold(
+                      body: Center(
+                        child: Text(AppLocalizations.of(context).appTitle),
+                      ),
+                    ),
                   );
                 },
               );

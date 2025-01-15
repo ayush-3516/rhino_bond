@@ -5,6 +5,8 @@ import 'package:rhino_bond/widgets/custom_app_drawer.dart';
 import 'package:rhino_bond/providers/theme_provider.dart';
 import 'package:rhino_bond/providers/language_provider.dart';
 import 'package:rhino_bond/l10n/localization.dart';
+import './privacy_policy_screen.dart';
+import './terms_of_service_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -165,7 +167,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: Text(AppLocalizations.of(context).privacyPolicy),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        // TODO: Navigate to privacy policy screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PrivacyPolicyScreen(),
+                          ),
+                        );
                       },
                     ),
                     ListTile(
@@ -173,7 +180,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: Text(AppLocalizations.of(context).termsOfService),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        // TODO: Navigate to terms of service screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TermsOfServiceScreen(),
+                          ),
+                        );
                       },
                     ),
                   ],

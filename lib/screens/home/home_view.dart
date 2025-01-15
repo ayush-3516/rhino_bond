@@ -122,9 +122,10 @@ class _HomeViewState extends State<HomeView> {
                     borderRadius: BorderRadius.circular(8.0),
                     child: Stack(
                       children: [
-                        event['image'] != null && event['image'].isNotEmpty
+                        event['image_url'] != null &&
+                                event['image_url'].isNotEmpty
                             ? Image.network(
-                                event['image']!,
+                                event['image_url']!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,

@@ -45,6 +45,11 @@ class LanguageProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_localeKey, newLocale.languageCode);
       notifyListeners();
+
+      // Force rebuild of MaterialApp
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
     }
   }
 }

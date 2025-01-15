@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rhino_bond/utils/logger.dart';
 
 class ScannerService {
-  static final _logger = Logger('QRCodeScanner');
   final supabase = Supabase.instance.client;
   String? _currentQrCodeId;
 
@@ -33,28 +32,29 @@ class ScannerService {
       try {
         qrData = jsonDecode(code);
         if (qrData is! Map<String, dynamic> || !qrData.containsKey('id')) {
-          throw FormatException('Invalid QR code format - missing required fields');
+          throw FormatException(
+              'Invalid QR code format - missing required fields');
         }
       } catch (e) {
         // If JSON parsing fails, try direct UUID format
-        if (!RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+        if (!RegExp(
+                r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
             .hasMatch(code)) {
-          throw FormatException('Invalid QR code format - must be JSON or UUID');
+          throw FormatException(
+              'Invalid QR code format - must be JSON or UUID');
         }
         // Create a simple map with just the ID if it's a UUID
         qrData = {'id': code};
       }
 
       _currentQrCodeId = qrData['id'] as String;
-      if (!RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+      if (!RegExp(
+              r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
           .hasMatch(_currentQrCodeId!)) {
         throw FormatException('Invalid QR code ID format - must be UUID');
       }
 
-      _logger.info('Processing QR code', {
-        'qrCodeId': _currentQrCodeId,
-        'timestamp': DateTime.now().toIso8601String()
-      });
+      Logger.debug('Processing QR code: $_currentQrCodeId');
 
       final user = supabase.auth.currentUser;
       if (user == null) {
@@ -65,7 +65,7 @@ class ScannerService {
       if (_currentQrCodeId == null) {
         throw Exception('QR code ID is null');
       }
-      
+
       final qrDetails = await supabase
           .from('qr_codes')
           .select('points_value')
@@ -77,11 +77,7 @@ class ScannerService {
         throw Exception('Invalid QR code - no points value found');
       }
 
-      _logger.info('Initiating QR code scan transaction', {
-        'qrCodeId': _currentQrCodeId,
-        'userId': user.id,
-        'pointsValue': qrDetails['points_value']
-      });
+      Logger.debug('Initiating QR code scan transaction for user: ${user.id}');
 
       final result = await supabase.rpc('scan_qr_transaction', params: {
         'qr_code_id': _currentQrCodeId,
@@ -95,38 +91,29 @@ class ScannerService {
 
       if (result['is_scanned'] == true) {
         final timestamp = result['scanned_at'] ?? 'previously';
-        _logger.warning('Attempt to reuse QR code', {
-          'qrCodeId': _currentQrCodeId,
-          'originalScan': timestamp,
-          'attemptedBy': user.id
-        });
+        Logger.warning(
+            'Attempt to reuse QR code: $_currentQrCodeId (originally scanned $timestamp)');
         throw Exception('This QR code was already scanned on $timestamp.');
       }
-      
-      if (result['is_active'] == false) {
-        _logger.warning('Attempt to use deactivated QR code', {
-          'qrCodeId': _currentQrCodeId,
-          'attemptedBy': user.id
-        });
-        throw Exception('This QR code has been deactivated.');
+
+      if (!result.containsKey('user')) {
+        throw Exception('Failed to process QR code - invalid response format');
       }
 
-      _logger.info('Successfully processed QR code', {
-        'qrCodeId': _currentQrCodeId,
-        'userId': user.id,
-        'pointsAwarded': qrDetails['points_value'],
-        'timestamp': DateTime.now().toIso8601String()
-      });
+      final userData = result['user'];
+      if (userData['id'] != user.id) {
+        throw Exception('Failed to process QR code - user mismatch');
+      }
+
+      Logger.success(
+          'QR code $_currentQrCodeId processed successfully. Points awarded: ${qrDetails['points_value']}');
 
       return qrData;
     } on FormatException {
       rethrow;
     } catch (e) {
-      _logger.severe('Transaction failed', {
-        'qrCodeId': _currentQrCodeId,
-        'error': e.toString(),
-        'timestamp': DateTime.now().toIso8601String()
-      });
+      Logger.error(
+          'Transaction failed for QR code: $_currentQrCodeId. Error: ${e.toString()}');
       rethrow;
     } finally {
       _currentQrCodeId = null;

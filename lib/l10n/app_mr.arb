@@ -183,5 +183,9 @@
   "otherTopic": "इतर",
   "@otherTopic": {
     "description": "Other topic option"
+  },
+  "termsOfServiceContent": "या सेवा अटी आमच्या सेवा वापरण्याच्या नियम आणि अटींचे वर्णन करतात. कृपया या अटी काळजीपूर्वक वाचा. आमच्या सेवा वापरून, तुम्ही या अटींना मान्यता देत आहात.",
+  "@termsOfServiceContent": {
+    "description": "Content for terms of service screen"
   }
 }

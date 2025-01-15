@@ -57,6 +57,7 @@
     "description": "Menu item for privacy policy"
   },
   "termsOfService": "Terms of Service",
+  "termsOfServiceContent": "By using Rhino Bond, you agree to the following terms:\n\n1. You must be at least 18 years old to use this service.\n2. You are responsible for maintaining the security of your account.\n3. We reserve the right to modify or terminate the service at any time.\n4. All transactions are final and non-refundable.\n5. You agree to use the service only for lawful purposes.\n\nPlease read these terms carefully before using our services.",
   "@termsOfService": {
     "description": "Menu item for terms of service"
   },
@@ -195,5 +196,20 @@
   "logout": "Logout",
   "@logout": {
     "description": "Logout menu item"
+  },
+  "privacyPolicyTitle": "Privacy Policy",
+  "@privacyPolicyTitle": {
+    "description": "Title for privacy policy screen"
+  },
+  "lastUpdated": "Last updated: {date}",
+  "@lastUpdated": {
+    "description": "Last updated date text",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "privacyPolicyContent": "We are committed to protecting your privacy...",
+  "@privacyPolicyContent": {
+    "description": "Main content of privacy policy"
   }
 }

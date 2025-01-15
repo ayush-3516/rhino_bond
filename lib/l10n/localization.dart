@@ -47,6 +47,8 @@ class AppLocalizations {
       _messages['privacyPolicy'] as String? ?? 'Privacy Policy';
   String get termsOfService =>
       _messages['termsOfService'] as String? ?? 'Terms of Service';
+  String get termsOfServiceContent =>
+      _messages['termsOfServiceContent'] as String? ?? '';
   String get about => _messages['about'] as String? ?? 'About';
   String get appVersion => _messages['appVersion'] as String? ?? 'App Version';
   String get checkForUpdates =>

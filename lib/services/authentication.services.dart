@@ -2,6 +2,7 @@ import 'package:supabase/supabase.dart' as supabase;
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase_flutter;
 import 'package:rhino_bond/models/user.dart';
 import 'package:flutter/material.dart';
+import 'package:rhino_bond/utils/logger.dart';
 
 /// Handles authentication-related operations such as sending verification codes, verifying phone numbers, and fetching user profiles.
 class AuthenticationService {
@@ -11,37 +12,38 @@ class AuthenticationService {
   Future<void> logout() async {
     try {
       await supabaseClient.auth.signOut();
-      print("User logged out successfully");
-    } catch (e) {
-      print("Error during logout: $e");
+      Logger.success("User logged out successfully");
+    } catch (e, stackTrace) {
+      Logger.error("Error during logout: $e");
       rethrow;
     }
   }
 
   /// Sets up an authentication state listener to handle user login and logout events.
   void setupAuthListener() {
-    print("Setting up authentication state listener");
+    Logger.debug("Setting up authentication state listener");
     supabaseClient.auth.onAuthStateChange.listen((data) async {
       final event = data.event;
       final session = data.session;
-      print("Auth state changed - Event: $event, Session: ${session != null}");
+      Logger.debug(
+          "Auth state changed - Event: $event, Session: ${session != null}");
 
       try {
         if (session != null) {
-          print("User logged in - ID: ${session.user.id}");
+          Logger.info("User logged in - ID: ${session.user.id}");
 
           // Fetch user profile and notify listeners
           final userProfile = await getUserProfile(session.user.id);
           if (userProfile != null) {
-            print("User profile loaded successfully");
+            Logger.success("User profile loaded successfully");
           }
         } else if (event == supabase_flutter.AuthChangeEvent.signedOut) {
-          print("User signed out successfully");
+          Logger.info("User signed out successfully");
         } else if (event == supabase_flutter.AuthChangeEvent.tokenRefreshed) {
-          print("Session token refreshed successfully");
+          Logger.debug("Session token refreshed successfully");
         }
       } catch (e) {
-        print("Error handling auth state change: $e");
+        Logger.error("Error handling auth state change: $e");
       }
     });
   }
@@ -54,7 +56,7 @@ class AuthenticationService {
   /// Fetches the user profile for the specified user ID.
   Future<Map<String, dynamic>?> getUserProfile(String userId) async {
     try {
-      print("Fetching user profile for ID: $userId");
+      Logger.debug("Fetching user profile for ID: $userId");
       final response = await supabaseClient
           .from('users')
           .select()
@@ -63,18 +65,17 @@ class AuthenticationService {
 
       if (response != null) {
         final userProfile = User.fromJson(response);
-        print(
+        Logger.success(
             "User profile fetched: ${userProfile.name}, ${userProfile.email}");
-        print(" HELLO ${userProfile}");
         return userProfile.toJson();
       }
-      print("No user profile found for ID: $userId");
+      Logger.warning("No user profile found for ID: $userId");
       return null;
     } on supabase.PostgrestException catch (e) {
-      print("Database error fetching user profile: ${e.message}");
+      Logger.error("Database error fetching user profile: ${e.message}");
       return null;
     } catch (e) {
-      print("Error fetching user profile: $e");
+      Logger.error("Error fetching user profile: $e");
       return null;
     }
   }
@@ -84,16 +85,16 @@ class AuthenticationService {
     required BuildContext context,
     required String phoneNumber,
   }) async {
-    print("DEBUG: Entering sendVerificationCode method");
-    print("Sending verification code to phone number: $phoneNumber");
+    Logger.debug("Entering sendVerificationCode method");
+    Logger.info("Sending verification code to phone number: $phoneNumber");
     try {
       await supabaseClient.auth.signInWithOtp(
         phone: phoneNumber,
       );
-      print("OTP sent successfully");
+      Logger.success("OTP sent successfully to $phoneNumber");
       return (null);
     } on supabase.AuthException catch (e) {
-      print(e);
+      Logger.error("Error sending verification code: $e");
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Process Failed: ${e.toString()}")));
       rethrow;
@@ -116,9 +117,9 @@ class AuthenticationService {
         'name': 'User',
         'email': '$userId@rhinobond.com'
       });
-      print("Minimal user profile created successfully");
-    } catch (e) {
-      print("Error creating user profile: $e");
+      Logger.success("Minimal user profile created successfully for $userId");
+    } catch (e, stackTrace) {
+      Logger.error("Error creating user profile: $e");
       rethrow;
     }
   }
@@ -129,11 +130,11 @@ class AuthenticationService {
     required String token,
     required String phoneNumber,
   }) async {
-    print("DEBUG: Entering verifyPhoneNumber method");
+    Logger.debug("Entering verifyPhoneNumber method");
     try {
       final response = await supabaseClient.auth.verifyOTP(
           type: supabase_flutter.OtpType.sms, phone: phoneNumber, token: token);
-      print("verifyPhoneNumber response: $response");
+      Logger.debug("verifyPhoneNumber response: $response");
 
       // Check if user profile exists before creating
       if (response.user != null) {
@@ -144,7 +145,7 @@ class AuthenticationService {
           await createUserProfile(userId, phoneNumber);
           return {'status': 'success', 'isNewUser': true, 'userId': userId};
         } else {
-          print("User profile already exists, skipping creation");
+          Logger.debug("User profile already exists, skipping creation");
           return {'status': 'success', 'isNewUser': false, 'userId': userId};
         }
       }
@@ -167,9 +168,9 @@ class AuthenticationService {
         'name': name,
         'email': email,
       }).eq('id', userId);
-      print("User profile updated successfully");
-    } catch (e) {
-      print("Error updating user profile: $e");
+      Logger.success("User profile updated successfully for $userId");
+    } catch (e, stackTrace) {
+      Logger.error("Error updating user profile: $e");
       rethrow;
     }
   }
@@ -187,7 +188,7 @@ class AuthenticationService {
 
       return response;
     } catch (e) {
-      print("Error fetching events: $e");
+      Logger.error("Error fetching events: $e");
       return [];
     }
   }
