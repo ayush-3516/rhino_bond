@@ -21,37 +21,128 @@ class ScannerService {
     }
   }
 
-  Future<Map<String, dynamic>> processCode(String code) async {
+  Future<Map<String, dynamic>> getProductInfo(String code) async {
     try {
+      String? qrCodeId;
+      bool isManual = false;
+
       if (code.isEmpty) {
-        throw Exception('Empty QR code');
+        throw Exception('Empty code');
       }
 
-      // Try parsing as JSON first
-      Map<String, dynamic> qrData;
-      try {
-        qrData = jsonDecode(code);
-        if (qrData is! Map<String, dynamic> || !qrData.containsKey('id')) {
-          throw FormatException(
-              'Invalid QR code format - missing required fields');
+      // Handle manual codes
+      if (RegExp(r'^[a-zA-Z0-9]{6,20}$').hasMatch(code)) {
+        qrCodeId = code;
+        isManual = true;
+      }
+      // Handle QR codes
+      else {
+        Map<String, dynamic> qrData;
+        try {
+          qrData = jsonDecode(code);
+          if (qrData is! Map<String, dynamic> || !qrData.containsKey('id')) {
+            throw FormatException(
+                'Invalid QR code format - missing required fields');
+          }
+        } catch (e) {
+          // If JSON parsing fails, try direct UUID format
+          if (!RegExp(
+                  r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+              .hasMatch(code)) {
+            throw FormatException(
+                'Invalid QR code format - must be JSON or UUID');
+          }
+          qrData = {'id': code};
         }
-      } catch (e) {
-        // If JSON parsing fails, try direct UUID format
+
+        qrCodeId = qrData['id'] as String;
         if (!RegExp(
                 r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-            .hasMatch(code)) {
-          throw FormatException(
-              'Invalid QR code format - must be JSON or UUID');
+            .hasMatch(qrCodeId)) {
+          throw FormatException('Invalid QR code ID format - must be UUID');
         }
-        // Create a simple map with just the ID if it's a UUID
-        qrData = {'id': code};
       }
 
-      _currentQrCodeId = qrData['id'] as String;
-      if (!RegExp(
-              r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-          .hasMatch(_currentQrCodeId!)) {
-        throw FormatException('Invalid QR code ID format - must be UUID');
+      Logger.debug('Fetching product info for code: $qrCodeId');
+
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
+
+      // Fetch QR code details with product information
+      final qrDetails = await supabase
+          .from('qr_codes')
+          .select('''
+            *,
+            products:product_id (name, description, points_value)
+          ''')
+          .eq(isManual ? 'manual_identifier' : 'id', qrCodeId)
+          .single()
+          .timeout(const Duration(seconds: 5));
+
+      if (qrDetails == null || qrDetails['points_value'] == null) {
+        throw Exception('Invalid QR code - no points value found');
+      }
+
+      // Return product information without processing transaction
+      return {
+        'id': qrCodeId,
+        'productName': qrDetails['products']['name'] ?? 'Unknown Product',
+        'manualIdentifier': qrDetails['manual_identifier'],
+        'points': qrDetails['points_value'],
+        'productDescription': qrDetails['products']['description'],
+        'productPoints': qrDetails['products']['points_value']
+      };
+    } on FormatException {
+      rethrow;
+    } catch (e) {
+      Logger.error('Failed to get product info: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> processCode(String code,
+      {bool isManual = false}) async {
+    try {
+      if (code.isEmpty) {
+        throw Exception('Empty code');
+      }
+
+      if (isManual) {
+        // Manual codes should be alphanumeric strings
+        if (!RegExp(r'^[a-zA-Z0-9]{6,20}$').hasMatch(code)) {
+          throw FormatException(
+              'Invalid manual identifier - must be 6-20 alphanumeric characters');
+        }
+        _currentQrCodeId = code;
+      } else {
+        // Handle scanned QR codes
+        Map<String, dynamic> qrData;
+        try {
+          qrData = jsonDecode(code);
+          if (qrData is! Map<String, dynamic> || !qrData.containsKey('id')) {
+            throw FormatException(
+                'Invalid QR code format - missing required fields');
+          }
+        } catch (e) {
+          // If JSON parsing fails, try direct UUID format
+          if (!RegExp(
+                  r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+              .hasMatch(code)) {
+            throw FormatException(
+                'Invalid QR code format - must be JSON or UUID');
+          }
+          // Create a simple map with just the ID if it's a UUID
+          qrData = {'id': code};
+        }
+
+        _currentQrCodeId = qrData['id'] as String;
+        if (!RegExp(
+                r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+            .hasMatch(_currentQrCodeId!)) {
+          throw FormatException('Invalid QR code ID format - must be UUID');
+        }
       }
 
       Logger.debug('Processing QR code: $_currentQrCodeId');
@@ -61,15 +152,14 @@ class ScannerService {
         throw Exception('User not authenticated');
       }
 
-      // Fetch QR code details from database
-      if (_currentQrCodeId == null) {
-        throw Exception('QR code ID is null');
-      }
-
+      // Fetch QR code details with product information
       final qrDetails = await supabase
           .from('qr_codes')
-          .select('points_value')
-          .eq('id', _currentQrCodeId!)
+          .select('''
+            *,
+            products:product_id (name, description, points_value)
+          ''')
+          .eq(isManual ? 'manual_identifier' : 'id', _currentQrCodeId!)
           .single()
           .timeout(const Duration(seconds: 5));
 
@@ -77,8 +167,13 @@ class ScannerService {
         throw Exception('Invalid QR code - no points value found');
       }
 
-      Logger.debug('Initiating QR code scan transaction for user: ${user.id}');
+      // Check if already scanned
+      if (qrDetails['is_scanned'] == true) {
+        final timestamp = qrDetails['scanned_at'] ?? 'previously';
+        throw Exception('This QR code was already scanned on $timestamp.');
+      }
 
+      // Process the scan transaction
       final result = await supabase.rpc('scan_qr_transaction', params: {
         'qr_code_id': _currentQrCodeId,
         'user_id': user.id,
@@ -89,26 +184,15 @@ class ScannerService {
         throw Exception('Failed to process QR code - no response from server');
       }
 
-      if (result['is_scanned'] == true) {
-        final timestamp = result['scanned_at'] ?? 'previously';
-        Logger.warning(
-            'Attempt to reuse QR code: $_currentQrCodeId (originally scanned $timestamp)');
-        throw Exception('This QR code was already scanned on $timestamp.');
-      }
-
-      if (!result.containsKey('user')) {
-        throw Exception('Failed to process QR code - invalid response format');
-      }
-
-      final userData = result['user'];
-      if (userData['id'] != user.id) {
-        throw Exception('Failed to process QR code - user mismatch');
-      }
-
-      Logger.success(
-          'QR code $_currentQrCodeId processed successfully. Points awarded: ${qrDetails['points_value']}');
-
-      return qrData;
+      // Return enriched scan data
+      return {
+        'id': _currentQrCodeId,
+        'productName': qrDetails['products']['name'] ?? 'Unknown Product',
+        'manualIdentifier': qrDetails['manual_identifier'],
+        'points': qrDetails['points_value'],
+        'productDescription': qrDetails['products']['description'],
+        'productPoints': qrDetails['products']['points_value']
+      };
     } on FormatException {
       rethrow;
     } catch (e) {

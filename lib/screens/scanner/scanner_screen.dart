@@ -50,18 +50,33 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   Future<void> _processCode(String code) async {
     try {
-      final qrData = await _scannerService.processCode(code);
-      final points = qrData['points'] ?? 'some';
-      _showScannedDialog(
-        'Success!',
-        'You earned $points points!',
-        onContinue: () => controller?.resumeCamera(),
-      );
-    } on FormatException {
-      _showScannedDialog(
-        'Invalid Code',
-        'The scanned code is not in the correct format. Please scan a valid Rhino Bond QR code.',
-        onContinue: () => controller?.resumeCamera(),
+      // First get product information without processing
+      final productInfo = await _scannerService.getProductInfo(code);
+
+      // Extract product information
+      final productName = productInfo['productName'] ?? 'Unknown Product';
+      final qrId = productInfo['id'] ?? 'N/A';
+      final manualId = productInfo['manualIdentifier'] ?? 'N/A';
+      final points = productInfo['points'] ?? '0';
+      final productPoints = productInfo['productPoints'] ?? '0';
+
+      _showConfirmationDialog(
+        '''
+Product: $productName
+QR Code ID: $qrId
+Manual Identifier: $manualId
+Points Earned: $points
+Product Points Value: $productPoints
+        ''',
+        'Scan Successful',
+        onConfirm: () async {
+          Navigator.pop(context);
+          await _processConfirmedCode(code);
+        },
+        onCancel: () {
+          Navigator.pop(context);
+          controller?.resumeCamera();
+        },
       );
     } on FormatException {
       _showScannedDialog(
@@ -99,7 +114,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
       return;
     }
 
-    final sanitizedCode = code.replaceAll(RegExp(r'[^a-zA-Z0-9{}\[\]":,.-]'), '');
+    final sanitizedCode =
+        code.replaceAll(RegExp(r'[^a-zA-Z0-9{}\[\]":,.-]'), '');
     _processCode(sanitizedCode);
   }
 
@@ -118,16 +134,18 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   void _onQRViewCreated(QRViewController controller) async {
     this.controller = controller;
-    
+
     try {
       // Check camera permissions first
       await _checkCameraPermissions();
-      
+
       // Configure camera settings
       await controller.resumeCamera();
+
+      // Ensure flash is off
       await controller.toggleFlash();
-      await controller.toggleFlash(); // Ensure flash is off
-      
+      await controller.toggleFlash();
+
       // Handle camera initialization
       final cameraInfo = await controller.getCameraInfo();
       if (cameraInfo == null) {
@@ -135,12 +153,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
       }
 
       // Handle camera stream with longer timeout
-      controller.scannedDataStream
-        .timeout(const Duration(seconds: 30), onTimeout: (sink) {
-          sink.addError('Camera timeout - please try again');
-          controller.pauseCamera();
-        })
-      .listen(
+      controller.scannedDataStream.timeout(const Duration(seconds: 30),
+          onTimeout: (sink) {
+        sink.addError('Camera timeout - please try again');
+        controller.pauseCamera();
+      }).listen(
         (scanData) async {
           if (scanData.code != null) {
             controller.pauseCamera();
@@ -165,6 +182,22 @@ class _ScannerScreenState extends State<ScannerScreen> {
     }
   }
 
+  Future<void> _processConfirmedCode(String code) async {
+    try {
+      await _scannerService.processCode(code);
+      _showScannedDialog(
+        'Processing Complete',
+        'The QR code has been successfully processed!',
+        onContinue: () => controller?.resumeCamera(),
+      );
+    } catch (e) {
+      _showScannedDialog(
+        'Error',
+        e.toString(),
+        onContinue: () => controller?.resumeCamera(),
+      );
+    }
+  }
 
   void _showScannedDialog(String title, String message,
       {VoidCallback? onContinue}) {
@@ -172,15 +205,205 @@ class _ScannerScreenState extends State<ScannerScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 20,
+        ),
+        title: Column(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: Theme.of(context).primaryColor,
+              size: 48,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Thank you for scanning!',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onContinue?.call();
-            },
-            child: const Text('Continue Scanning'),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                onContinue?.call();
+              },
+              child: const Text(
+                'Continue Scanning',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfirmationDialog(String message, String title,
+      {VoidCallback? onConfirm, VoidCallback? onCancel}) {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 20,
+        ),
+        title: Column(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: Theme.of(context).primaryColor,
+              size: 48,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Thank you for scanning!',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    onPressed: onCancel,
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: onConfirm,
+                    child: const Text(
+                      'Confirm',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -274,10 +497,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     style: const TextStyle(color: Colors.white, fontSize: 16),
                     decoration: InputDecoration(
                       hintText: 'Enter barcode',
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+                      hintStyle:
+                          TextStyle(color: Colors.white.withOpacity(0.7)),
                       filled: true,
                       fillColor: Colors.black.withOpacity(0.3),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -289,7 +514,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.send, color: Colors.white, size: 20),
+                          icon: const Icon(Icons.send,
+                              color: Colors.white, size: 20),
                           onPressed: _submitManualCode,
                         ),
                       ),
