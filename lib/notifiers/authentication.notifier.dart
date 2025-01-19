@@ -6,6 +6,14 @@ import 'package:rhino_bond/widgets/providers/user_provider.dart';
 class AuthenticationNotifier extends ChangeNotifier {
   late final AuthenticationService _authenticationService;
   final UserProvider _userProvider;
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
 
   AuthenticationNotifier(
     AuthenticationService authenticationService,
@@ -16,6 +24,7 @@ class AuthenticationNotifier extends ChangeNotifier {
 
   Future<void> logout() async {
     try {
+      setLoading(true);
       await _authenticationService.logout();
       _isAuthenticated = false;
       _currentUser = null;
@@ -24,6 +33,8 @@ class AuthenticationNotifier extends ChangeNotifier {
     } catch (e) {
       print("Error during logout: $e");
       rethrow;
+    } finally {
+      setLoading(false);
     }
   }
 

@@ -26,8 +26,18 @@ class _HomeViewState extends State<HomeView> {
     _loadEvents();
   }
 
+  List<Map<String, dynamic>> _filterActiveEvents(
+      List<Map<String, dynamic>> events) {
+    final now = DateTime.now();
+    return events.where((event) {
+      final endDate = DateTime.tryParse(event['end_date'] ?? '');
+      return endDate != null && endDate.isAfter(now);
+    }).toList();
+  }
+
   Future<void> _loadEvents() async {
     if (!mounted) return;
+    print('Loading events...');
 
     setState(() {
       _isLoading = true;
@@ -38,11 +48,16 @@ class _HomeViewState extends State<HomeView> {
         Provider.of<AuthenticationService>(context, listen: false);
     try {
       final events = await authService.getActiveEvents();
+      print('Fetched ${events.length} events');
       if (!mounted) return;
 
+      final activeEvents = _filterActiveEvents(events);
+      print('Filtered to ${activeEvents.length} active events');
+
       setState(() {
-        _events = events;
+        _events = activeEvents;
         _isLoading = false;
+        print('Events updated in state');
       });
     } catch (e) {
       if (!mounted) return;
@@ -374,7 +389,7 @@ class _HomeViewState extends State<HomeView> {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
-                      // TODO: Implement rewards navigation
+                      Navigator.pushNamed(context, '/rewards');
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),

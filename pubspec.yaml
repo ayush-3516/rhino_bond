@@ -33,6 +33,7 @@ flutter:
   uses-material-design: true
   assets:
     - lib/assets/logo.svg
+    - lib/assets/GPR LOGO.png
   generate: true
 
 l10n:

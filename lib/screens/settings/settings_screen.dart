@@ -5,8 +5,9 @@ import 'package:rhino_bond/widgets/custom_app_drawer.dart';
 import 'package:rhino_bond/providers/theme_provider.dart';
 import 'package:rhino_bond/providers/language_provider.dart';
 import 'package:rhino_bond/l10n/localization.dart';
-import './privacy_policy_screen.dart';
-import './terms_of_service_screen.dart';
+import 'package:rhino_bond/screens/settings/privacy_policy_screen.dart';
+import 'package:rhino_bond/screens/settings/terms_of_service_screen.dart';
+import 'package:rhino_bond/screens/settings/change_password_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -71,7 +72,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: Text(AppLocalizations.of(context).changePassword),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
-                        Navigator.pushNamed(context, '/changePassword');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChangePasswordScreen(),
+                          ),
+                        );
                       },
                     ),
                   ],

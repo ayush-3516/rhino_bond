@@ -15,21 +15,25 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
+  AuthenticationNotifier? _authNotifier;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final authNotifier =
+      _authNotifier =
           Provider.of<AuthenticationNotifier>(context, listen: false);
 
-      if (!authNotifier.isAuthenticated) {
-        Navigator.pushNamed(context, '/send_otp');
-      } else if (!authNotifier.isPhoneNumberVerified) {
-        Navigator.pushNamed(context, '/verify_otp');
+      if (!_authNotifier!.isAuthenticated) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/send_otp', (route) => false);
+      } else if (!_authNotifier!.isPhoneNumberVerified) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/verify_otp', (route) => false);
       } else {
         print('User is authenticated, fetching profile...');
         try {
-          await authNotifier.fetchCurrentUserProfile();
+          await _authNotifier!.fetchCurrentUserProfile();
           print('User profile fetched successfully');
         } catch (e) {
           print('Error fetching user profile: $e');
@@ -39,13 +43,48 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _authNotifier = Provider.of<AuthenticationNotifier>(context);
+    _authNotifier?.addListener(_handleAuthChange);
+  }
+
+  void _handleAuthChange() {
+    if (_authNotifier != null && !_authNotifier!.isAuthenticated) {
+      Navigator.pushNamedAndRemoveUntil(context, '/send_otp', (route) => false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _authNotifier?.removeListener(_handleAuthChange);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authNotifier = Provider.of<AuthenticationNotifier>(context);
 
-    if (authNotifier.isAuthenticated && authNotifier.isPhoneNumberVerified) {
-      return widget.child;
+    if (authNotifier.isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
 
-    return const Center(child: CircularProgressIndicator());
+    if (!authNotifier.isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/send_otp', (route) => false);
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!authNotifier.isPhoneNumberVerified) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/verify_otp', (route) => false);
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return widget.child;
   }
 }

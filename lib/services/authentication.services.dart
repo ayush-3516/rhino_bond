@@ -3,16 +3,36 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supabase_flutter;
 import 'package:rhino_bond/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:rhino_bond/utils/logger.dart';
+import 'package:rhino_bond/services/secure_storage_service.dart';
 
 /// Handles authentication-related operations such as sending verification codes, verifying phone numbers, and fetching user profiles.
 class AuthenticationService {
   static final supabaseClient = supabase_flutter.Supabase.instance.client;
+  final SecureStorageService _secureStorage = SecureStorageService();
+
+  /// Changes the user's password
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      // Update password using Supabase auth
+      await supabaseClient.auth.updateUser(
+        supabase_flutter.UserAttributes(password: newPassword),
+      );
+      Logger.success("Password changed successfully");
+    } catch (e) {
+      Logger.error("Error changing password: $e");
+      rethrow;
+    }
+  }
 
   /// Logs out the current user.
   Future<void> logout() async {
     try {
       await supabaseClient.auth.signOut();
-      Logger.success("User logged out successfully");
+      await _secureStorage.deleteAll();
+      Logger.success("User logged out successfully and tokens cleared");
     } catch (e, stackTrace) {
       Logger.error("Error during logout: $e");
       rethrow;
@@ -31,6 +51,13 @@ class AuthenticationService {
       try {
         if (session != null) {
           Logger.info("User logged in - ID: ${session.user.id}");
+          // Store access token securely
+          if (session.accessToken != null) {
+            await _secureStorage.write('access_token', session.accessToken!);
+          }
+          if (session.refreshToken != null) {
+            await _secureStorage.write('refresh_token', session.refreshToken!);
+          }
 
           // Fetch user profile and notify listeners
           final userProfile = await getUserProfile(session.user.id);
@@ -178,13 +205,16 @@ class AuthenticationService {
   /// Fetches active events from the database
   Future<List<Map<String, dynamic>>> getActiveEvents() async {
     try {
-      final now = DateTime.now().toIso8601String();
+      Logger.debug("Fetching all active events");
+
+      // Get all active events without date filtering
       final response = await supabaseClient
           .from('events')
-          .select()
+          .select('*')
           .eq('is_active', true)
-          .gte('end_date', now)
           .order('start_date');
+
+      Logger.debug("Found ${response.length} active events");
 
       return response;
     } catch (e) {

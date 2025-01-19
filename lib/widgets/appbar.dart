@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final String? title;
   final GlobalKey<ScaffoldState> scaffoldKey;
   final bool showBackButton;
 
   const CustomAppBar({
     Key? key,
-    required this.title,
+    this.title,
     required this.scaffoldKey,
     this.showBackButton = false,
   }) : super(key: key);
@@ -52,31 +52,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               },
             )
           : null,
-      title: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: SvgPicture.asset(
-              'lib/assets/logo.svg',
-              height: 36,
-              colorFilter: const ColorFilter.mode(
-                Color(0xFF00008B), // Dark blue color
-                BlendMode.srcIn,
-              ),
-            ),
+      title: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: SvgPicture.asset(
+          'lib/assets/logo.svg',
+          height: 36,
+          colorFilter: const ColorFilter.mode(
+            Color(0xFF00008B), // Dark blue color
+            BlendMode.srcIn,
           ),
-          const SizedBox(width: 8),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white,
-            ),
-          ),
-        ],
+        ),
       ),
       actions: [
         IconButton(
@@ -90,8 +75,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
       centerTitle: true,
-      elevation: 0,
-      backgroundColor: Colors.transparent,
+      elevation: 4,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 
