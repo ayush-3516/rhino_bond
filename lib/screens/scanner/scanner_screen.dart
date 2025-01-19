@@ -58,7 +58,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
       final qrId = productInfo['id'] ?? 'N/A';
       final manualId = productInfo['manualIdentifier'] ?? 'N/A';
       final points = productInfo['points'] ?? '0';
-      final productPoints = productInfo['productPoints'] ?? '0';
 
       _showConfirmationDialog(
         '''
@@ -66,7 +65,6 @@ Product: $productName
 QR Code ID: $qrId
 Manual Identifier: $manualId
 Points Earned: $points
-Product Points Value: $productPoints
         ''',
         'Scan Successful',
         onConfirm: () async {
@@ -114,8 +112,7 @@ Product Points Value: $productPoints
       return;
     }
 
-    final sanitizedCode =
-        code.replaceAll(RegExp(r'[^a-zA-Z0-9{}\[\]":,.-]'), '');
+    final sanitizedCode = code.replaceAll(RegExp(r'[^a-zA-Z0-9-]'), '');
     _processCode(sanitizedCode);
   }
 
