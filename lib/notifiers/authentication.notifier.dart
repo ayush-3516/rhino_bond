@@ -117,19 +117,35 @@ class AuthenticationNotifier extends ChangeNotifier {
   }
 
   /// Verifies the phone number using the provided token.
+  bool _isShowingRegistration = false;
+
   Future<Map<String, dynamic>> verifyPhoneNumber({
     required String token,
     required BuildContext context,
     required String phoneNumber,
   }) async {
     try {
-      final isNewUser = await _authenticationService.verifyPhoneNumber(
+      if (_isShowingRegistration) {
+        return {
+          'status': 'pending',
+          'message': 'Registration already in progress'
+        };
+      }
+
+      final response = await _authenticationService.verifyPhoneNumber(
           token: token, context: context, phoneNumber: phoneNumber);
+      final isNewUser = response['isNewUser'] as bool;
 
       _isPhoneNumberVerified = true;
       _isAuthenticated = true;
       notifyListeners();
 
+      if (isNewUser) {
+        _isShowingRegistration = true;
+        Navigator.of(context).pushReplacementNamed('/complete_profile');
+      } else {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
       return {
         'status': 'success',
         'isNewUser': isNewUser,
