@@ -104,14 +104,17 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
   }
 
   List<RewardHistory> _getFilteredHistory(List<RewardHistory> history) {
-    if (_selectedFilter == 'All') return history;
-    if (_selectedFilter == 'Earned') {
-      return history.where((item) => item.type == 'earn').toList();
+    if (history.isEmpty) return [];
+
+    switch (_selectedFilter) {
+      case 'Earned':
+        return history.where((item) => item.type == 'earn').toList();
+      case 'Redeemed':
+        return history.where((item) => item.type != 'earn').toList();
+      case 'All':
+      default:
+        return history;
     }
-    if (_selectedFilter == 'Redeemed') {
-      return history.where((item) => item.type != 'earn').toList();
-    }
-    return history;
   }
 
   Widget _buildShimmerLoader() {
@@ -151,8 +154,10 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
-              setState(() => _transactionsFuture = _fetchTransactions());
-              await _transactionsFuture;
+              final transactions = await _fetchTransactions();
+              setState(() {
+                _transactionsFuture = Future.value(transactions);
+              });
             },
             child: FutureBuilder<List<RewardHistory>>(
               future: _transactionsFuture,
@@ -189,12 +194,18 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
                       children: [
                         Icon(Icons.history, size: 64, color: Colors.grey[400]),
                         const SizedBox(height: 16),
-                        Text('No transactions found',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            )),
+                        Text(
+                          _selectedFilter == 'Earned'
+                              ? 'No earned transactions found'
+                              : _selectedFilter == 'Redeemed'
+                                  ? 'No redeemed transactions found'
+                                  : 'No transactions found',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () => setState(
@@ -348,8 +359,41 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.all(16),
-                          initialItemCount: filteredHistory.length,
+                          initialItemCount: filteredHistory.isEmpty
+                              ? 1
+                              : filteredHistory.length,
                           itemBuilder: (context, index, animation) {
+                            if (filteredHistory.isEmpty) {
+                              return SizeTransition(
+                                sizeFactor: animation,
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.history,
+                                            size: 64, color: Colors.grey[400]),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          _selectedFilter == 'Earned'
+                                              ? 'No earned transactions found'
+                                              : _selectedFilter == 'Redeemed'
+                                                  ? 'No redeemed transactions found'
+                                                  : 'No transactions found',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                             final item = filteredHistory[index];
                             return SizeTransition(
                               sizeFactor: animation,
