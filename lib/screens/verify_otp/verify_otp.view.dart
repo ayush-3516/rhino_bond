@@ -141,17 +141,14 @@ class _OTPVerificationViewState extends State<OTPVerificationView> {
                                 );
 
                                 if (result['status'] == 'success') {
-                                  if (result['isNewUser'] == true) {
-                                    // Show registration form
-                                    _showRegistrationForm(context);
-                                  } else {
-                                    // Existing user, navigate to home
-                                    Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      '/',
-                                      (route) => false,
-                                    );
-                                  }
+                                  // Navigate to appropriate screen based on user status
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    result['isNewUser'] == true
+                                        ? '/complete_profile'
+                                        : '/',
+                                    (route) => false,
+                                  );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -182,102 +179,6 @@ class _OTPVerificationViewState extends State<OTPVerificationView> {
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showRegistrationForm(BuildContext context) {
-    final nameController = TextEditingController();
-    final emailController = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-    final authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: false);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Complete Registration'),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-
-                try {
-                  final userId = authenticationNotifier.currentUser?['id'];
-                  if (userId != null) {
-                    await authenticationNotifier.completeRegistration(
-                      userId: userId,
-                      name: nameController.text,
-                      email: emailController.text,
-                    );
-
-                    // Close both dialogs
-                    Navigator.of(context).pop(); // Loading dialog
-                    Navigator.of(context).pop(); // Registration dialog
-
-                    // Navigate to home
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/',
-                      (route) => false,
-                    );
-                  } else {
-                    Navigator.of(context).pop(); // Loading dialog
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('User ID not found')),
-                    );
-                  }
-                } catch (e) {
-                  Navigator.of(context).pop(); // Loading dialog
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Registration failed: $e')),
-                  );
-                }
-              }
-            },
-            child: const Text('Submit'),
           ),
         ],
       ),

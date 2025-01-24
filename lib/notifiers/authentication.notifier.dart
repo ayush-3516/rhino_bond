@@ -141,7 +141,6 @@ class AuthenticationNotifier extends ChangeNotifier {
       notifyListeners();
 
       if (isNewUser) {
-        _isShowingRegistration = true;
         Navigator.of(context).pushReplacementNamed('/complete_profile');
       } else {
         Navigator.of(context).pushReplacementNamed('/home');
