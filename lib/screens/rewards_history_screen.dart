@@ -6,7 +6,7 @@ import 'package:rhino_bond/widgets/custom_app_drawer.dart';
 import 'package:rhino_bond/models/reward_history.dart';
 
 class RewardsHistoryScreen extends StatefulWidget {
-  const RewardsHistoryScreen({Key? key}) : super(key: key);
+  const RewardsHistoryScreen({super.key});
 
   @override
   State<RewardsHistoryScreen> createState() => _RewardsHistoryScreenState();

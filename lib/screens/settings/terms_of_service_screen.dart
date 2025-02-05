@@ -3,7 +3,7 @@ import 'package:rhino_bond/widgets/appbar.dart';
 import 'package:rhino_bond/l10n/localization.dart';
 
 class TermsOfServiceScreen extends StatelessWidget {
-  const TermsOfServiceScreen({Key? key}) : super(key: key);
+  const TermsOfServiceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

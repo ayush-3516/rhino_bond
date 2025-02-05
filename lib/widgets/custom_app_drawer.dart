@@ -5,6 +5,8 @@ import 'package:rhino_bond/notifiers/authentication.notifier.dart';
 import 'package:rhino_bond/l10n/localization.dart';
 
 class CustomAppDrawer extends StatelessWidget {
+  const CustomAppDrawer({super.key});
+
   Widget _buildDrawerItem(
     BuildContext context, {
     required IconData icon,

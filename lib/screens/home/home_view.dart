@@ -7,7 +7,7 @@ import 'package:rhino_bond/services/authentication.services.dart';
 import 'package:rhino_bond/screens/scanner/scanner_screen.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
   _HomeViewState createState() => _HomeViewState();

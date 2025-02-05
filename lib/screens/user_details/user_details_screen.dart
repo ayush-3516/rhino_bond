@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rhino_bond/widgets/providers/user_provider.dart';
 
 class UserDetailsScreen extends StatelessWidget {
-  const UserDetailsScreen({Key? key}) : super(key: key);
+  const UserDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

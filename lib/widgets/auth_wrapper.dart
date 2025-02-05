@@ -8,7 +8,7 @@ class AuthWrapper extends StatefulWidget {
   final Widget child;
 
   /// Creates an instance of [AuthWrapper].
-  const AuthWrapper({Key? key, required this.child}) : super(key: key);
+  const AuthWrapper({super.key, required this.child});
 
   @override
   _AuthWrapperState createState() => _AuthWrapperState();

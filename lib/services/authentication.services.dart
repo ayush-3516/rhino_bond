@@ -33,7 +33,7 @@ class AuthenticationService {
       await supabaseClient.auth.signOut();
       await _secureStorage.deleteAll();
       Logger.success("User logged out successfully and tokens cleared");
-    } catch (e, stackTrace) {
+    } catch (e) {
       Logger.error("Error during logout: $e");
       rethrow;
     }
@@ -52,9 +52,7 @@ class AuthenticationService {
         if (session != null) {
           Logger.info("User logged in - ID: ${session.user.id}");
           // Store access token securely
-          if (session.accessToken != null) {
-            await _secureStorage.write('access_token', session.accessToken!);
-          }
+          await _secureStorage.write('access_token', session.accessToken);
           if (session.refreshToken != null) {
             await _secureStorage.write('refresh_token', session.refreshToken!);
           }
@@ -145,7 +143,7 @@ class AuthenticationService {
         'email': '$userId@rhinobond.com'
       });
       Logger.success("Minimal user profile created successfully for $userId");
-    } catch (e, stackTrace) {
+    } catch (e) {
       Logger.error("Error creating user profile: $e");
       rethrow;
     }
@@ -196,7 +194,7 @@ class AuthenticationService {
         'email': email,
       }).eq('id', userId);
       Logger.success("User profile updated successfully for $userId");
-    } catch (e, stackTrace) {
+    } catch (e) {
       Logger.error("Error updating user profile: $e");
       rethrow;
     }

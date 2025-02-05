@@ -55,7 +55,7 @@ class ScannerService {
           .single()
           .timeout(const Duration(seconds: 5));
 
-      if (qrDetails == null || qrDetails['points_value'] == null) {
+      if (qrDetails['points_value'] == null) {
         Logger.error(
             'No valid product found for manual identifier: $manualIdentifier');
         throw Exception('Invalid manual identifier - no points value found');
@@ -115,7 +115,7 @@ class ScannerService {
           .single()
           .timeout(const Duration(seconds: 5));
 
-      if (qrDetails == null || qrDetails['points_value'] == null) {
+      if (qrDetails['points_value'] == null) {
         Logger.error(
             'No valid product found for manual identifier: $manualIdentifier');
         throw Exception('Invalid manual identifier - no points value found');
@@ -177,7 +177,7 @@ class ScannerService {
         Map<String, dynamic> qrData;
         try {
           qrData = jsonDecode(code);
-          if (qrData is! Map<String, dynamic> || !qrData.containsKey('id')) {
+          if (!qrData.containsKey('id')) {
             throw FormatException(
                 'Invalid QR code format - missing required fields');
           }
@@ -216,7 +216,7 @@ class ScannerService {
           .single()
           .timeout(const Duration(seconds: 5));
 
-      if (qrDetails == null || qrDetails['points_value'] == null) {
+      if (qrDetails['points_value'] == null) {
         throw Exception('Invalid QR code - no points value found');
       }
 
@@ -253,7 +253,7 @@ class ScannerService {
         Map<String, dynamic> qrData;
         try {
           qrData = jsonDecode(code);
-          if (qrData is! Map<String, dynamic> || !qrData.containsKey('id')) {
+          if (!qrData.containsKey('id')) {
             throw FormatException(
                 'Invalid QR code format - missing required fields');
           }
@@ -292,7 +292,7 @@ class ScannerService {
           .single()
           .timeout(const Duration(seconds: 5));
 
-      if (qrDetails == null || qrDetails['points_value'] == null) {
+      if (qrDetails['points_value'] == null) {
         throw Exception('Invalid QR code - no points value found');
       }
 

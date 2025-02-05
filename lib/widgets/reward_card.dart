@@ -8,13 +8,13 @@ class RewardCard extends StatelessWidget {
   final VoidCallback onRedeem;
 
   const RewardCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.points,
     required this.stock,
     required this.onRedeem,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,7 @@ import 'package:rhino_bond/screens/settings/terms_of_service_screen.dart';
 import 'package:rhino_bond/screens/settings/change_password_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();

@@ -60,6 +60,7 @@ class SharedAxisTransition extends AnimatedWidget {
   final Widget child;
 
   const SharedAxisTransition({
+    super.key,
     required this.animation,
     required this.secondaryAnimation,
     required this.transitionType,

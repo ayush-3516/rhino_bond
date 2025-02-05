@@ -9,11 +9,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showBackButton;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     this.title,
     required this.scaffoldKey,
     this.showBackButton = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,44 +39,46 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       );
     }
 
-    return AppBar(
-      automaticallyImplyLeading: false,
-      leading: showBackButton
-          ? IconButton(
-              icon: Icon(Icons.arrow_back,
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.black
-                      : Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          : null,
-      title: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: SvgPicture.asset(
-          'lib/assets/logo.svg',
-          height: 36,
-          colorFilter: const ColorFilter.mode(
-            Color(0xFF00008B), // Dark blue color
-            BlendMode.srcIn,
+    return Container(
+      child: AppBar(
+        automaticallyImplyLeading: false,
+        leading: showBackButton
+            ? IconButton(
+                icon: Icon(Icons.arrow_back,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            : null,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: SvgPicture.asset(
+            'lib/assets/logo.svg',
+            height: 36,
+            colorFilter: const ColorFilter.mode(
+              Color(0xFF00008B), // Dark blue color
+              BlendMode.srcIn,
+            ),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.menu,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white),
+            onPressed: () {
+              scaffoldKey.currentState?.openDrawer();
+            },
+          ),
+        ],
+        centerTitle: true,
+        elevation: 4,
+        backgroundColor: Colors.transparent,
       ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.menu,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.black
-                  : Colors.white),
-          onPressed: () {
-            scaffoldKey.currentState?.openDrawer();
-          },
-        ),
-      ],
-      centerTitle: true,
-      elevation: 4,
-      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 

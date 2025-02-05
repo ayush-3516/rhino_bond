@@ -117,7 +117,7 @@ class AuthenticationNotifier extends ChangeNotifier {
   }
 
   /// Verifies the phone number using the provided token.
-  bool _isShowingRegistration = false;
+  final bool _isShowingRegistration = false;
 
   Future<Map<String, dynamic>> verifyPhoneNumber({
     required String token,

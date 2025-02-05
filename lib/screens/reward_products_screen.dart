@@ -8,7 +8,7 @@ import 'package:rhino_bond/notifiers/redemption_notifier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RewardProductsScreen extends StatefulWidget {
-  const RewardProductsScreen({Key? key}) : super(key: key);
+  const RewardProductsScreen({super.key});
 
   @override
   _RewardProductsScreenState createState() => _RewardProductsScreenState();
@@ -153,34 +153,32 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
                                   const SizedBox(height: 16),
 
                                   // Product Details
-                                  if (product.name != null)
-                                    Text(
-                                      product.name!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
-                                    ),
+                                  Text(
+                                    product.name,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                        ),
+                                  ),
                                   const SizedBox(height: 8),
 
-                                  if (product.description != null)
-                                    Text(
-                                      product.description!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                                .withOpacity(0.8),
-                                          ),
-                                    ),
+                                  Text(
+                                    product.description,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.8),
+                                        ),
+                                  ),
                                   const SizedBox(height: 16),
 
                                   // Points and Action
@@ -188,19 +186,18 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      if (product.pointsRequired != null)
-                                        Text(
-                                          '${product.pointsRequired} points',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        ),
+                                      Text(
+                                        '${product.pointsRequired} points',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(height: 16),
@@ -224,11 +221,11 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
                                         animationDuration:
                                             const Duration(milliseconds: 200),
                                       ).copyWith(
-                                        overlayColor: MaterialStateProperty
+                                        overlayColor: WidgetStateProperty
                                             .resolveWith<Color?>(
-                                          (Set<MaterialState> states) {
+                                          (Set<WidgetState> states) {
                                             if (states.contains(
-                                                MaterialState.hovered)) {
+                                                WidgetState.hovered)) {
                                               return Theme.of(context)
                                                   .colorScheme
                                                   .primary
@@ -268,18 +265,18 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
                                                 as int;
 
                                         if (userPoints <
-                                            product.pointsRequired!) {
+                                            product.pointsRequired) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                  'Insufficient points. You need ${product.pointsRequired! - userPoints} more points'),
+                                                  'Insufficient points. You need ${product.pointsRequired - userPoints} more points'),
                                             ),
                                           );
                                           return;
                                         }
 
-                                        if (product.stock! <= 0) {
+                                        if (product.stock <= 0) {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
@@ -292,7 +289,7 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
 
                                         await redemptionNotifier.redeemProduct(
                                           productId: product.id,
-                                          points: product.pointsRequired!,
+                                          points: product.pointsRequired,
                                         );
 
                                         if (redemptionNotifier.error != null) {

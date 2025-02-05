@@ -5,10 +5,10 @@ class ScannerOverlay extends StatefulWidget {
   final Color scanLineColor;
 
   const ScannerOverlay({
-    Key? key,
+    super.key,
     this.overlayColor = Colors.black87,
     this.scanLineColor = const Color(0xFF2196F3),
-  }) : super(key: key);
+  });
 
   @override
   State<ScannerOverlay> createState() => _ScannerOverlayState();

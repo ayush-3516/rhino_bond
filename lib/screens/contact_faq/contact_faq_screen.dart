@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:rhino_bond/l10n/localization.dart';
 
 class ContactFAQScreen extends StatefulWidget {
-  const ContactFAQScreen({Key? key}) : super(key: key);
+  const ContactFAQScreen({super.key});
 
   @override
   State<ContactFAQScreen> createState() => _ContactFAQScreenState();

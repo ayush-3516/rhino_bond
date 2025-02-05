@@ -554,6 +554,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mobile_scanner:
+    dependency: "direct main"
+    description:
+      name: mobile_scanner
+      sha256: "8b4d42bbdd5cbba78462e7074d99d413fd6ca998bceb1fa77f54423ead7014f0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.5"
   nested:
     dependency: transitive
     description:
@@ -754,14 +762,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  qr_code_scanner:
-    dependency: "direct main"
-    description:
-      name: qr_code_scanner
-      sha256: f23b68d893505a424f0bd2e324ebea71ed88465d572d26bb8d2e78a4749591fd
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   realtime_client:
     dependency: transitive
     description:

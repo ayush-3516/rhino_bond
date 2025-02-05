@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:rhino_bond/widgets/custom_app_drawer.dart';
 import 'package:rhino_bond/services/scanner_service.dart';
 import 'package:rhino_bond/screens/scanner/components/scanner_overlay.dart';
 import 'package:logging/logging.dart';
 
 class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({Key? key}) : super(key: key);
+  const ScannerScreen({super.key});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
@@ -16,10 +16,10 @@ class ScannerScreen extends StatefulWidget {
 
 class _ScannerScreenState extends State<ScannerScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   final TextEditingController _barcodeController = TextEditingController();
-  QRViewController? controller;
+  MobileScannerController controller = MobileScannerController();
   bool isFlashOn = false;
+  bool isCameraInitialized = false;
   final _scannerService = ScannerService();
 
   @override
@@ -29,21 +29,35 @@ class _ScannerScreenState extends State<ScannerScreen> {
     Logger.root.onRecord.listen((record) {
       print('${record.level.name}: ${record.time}: ${record.message}');
     });
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    try {
+      await _checkCameraPermissions();
+      await controller.start();
+      setState(() => isCameraInitialized = true);
+    } catch (e) {
+      _showScannedDialog(
+        'Camera Error',
+        e.toString(),
+        onContinue: () => Navigator.pop(context),
+      );
+    }
   }
 
   @override
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller?.pauseCamera();
-    } else if (Platform.isIOS) {
-      controller?.resumeCamera();
+      controller.stop();
     }
+    controller.start();
   }
 
   @override
   void dispose() {
-    controller?.dispose();
+    controller.dispose();
     _barcodeController.dispose();
     super.dispose();
   }
@@ -281,14 +295,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
         },
         onCancel: () {
           Navigator.pop(context);
-          controller?.resumeCamera();
+          controller.start(); // Changed from resumeCamera()
         },
       );
     } on FormatException {
       _showScannedDialog(
         'Invalid Code',
         'The scanned code is not in the correct format. Please scan a valid Rhino Bond QR code.',
-        onContinue: () => controller?.resumeCamera(),
+        onContinue: () => controller.start(),
       );
     } on Exception catch (e) {
       if (e.toString().contains('already scanned')) {
@@ -297,13 +311,13 @@ class _ScannerScreenState extends State<ScannerScreen> {
         _showScannedDialog(
           'QR Code Already Scanned',
           'This QR code was already scanned on:\n\n$timestamp\n\nPlease scan a different code.',
-          onContinue: () => controller?.resumeCamera(),
+          onContinue: () => controller.start(),
         );
       } else {
         _showScannedDialog(
           'Error',
           e.toString(),
-          onContinue: () => controller?.resumeCamera(),
+          onContinue: () => controller.start(),
         );
       }
     }
@@ -315,7 +329,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       _showScannedDialog(
         'Error',
         'Please enter a code',
-        onContinue: () => controller?.resumeCamera(),
+        onContinue: () => controller.start(),
       );
       return;
     }
@@ -337,69 +351,19 @@ class _ScannerScreenState extends State<ScannerScreen> {
     }
   }
 
-  void _onQRViewCreated(QRViewController controller) async {
-    this.controller = controller;
-
-    try {
-      // Check camera permissions first
-      await _checkCameraPermissions();
-
-      // Configure camera settings
-      await controller.resumeCamera();
-
-      // Ensure flash is off
-      await controller.toggleFlash();
-      await controller.toggleFlash();
-
-      // Handle camera initialization
-      final cameraInfo = await controller.getCameraInfo();
-      if (cameraInfo == null) {
-        throw Exception('Unable to access camera');
-      }
-
-      // Handle camera stream with longer timeout
-      controller.scannedDataStream.timeout(const Duration(seconds: 30),
-          onTimeout: (sink) {
-        sink.addError('Camera timeout - please try again');
-        controller.pauseCamera();
-      }).listen(
-        (scanData) async {
-          if (scanData.code != null) {
-            controller.pauseCamera();
-            await _processCode(scanData.code!);
-          }
-        },
-        onError: (error) {
-          _showScannedDialog(
-            'Camera Error',
-            error.toString(),
-            onContinue: () => controller?.resumeCamera(),
-          );
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      _showScannedDialog(
-        'Camera Error',
-        e.toString(),
-        onContinue: () => controller?.resumeCamera(),
-      );
-    }
-  }
-
   Future<void> _processConfirmedCode(String code) async {
     try {
       await _scannerService.processCode(code);
       _showScannedDialog(
         'Processing Complete',
         'The QR code has been successfully processed!',
-        onContinue: () => controller?.resumeCamera(),
+        onContinue: () => controller.start(),
       );
     } catch (e) {
       _showScannedDialog(
         'Error',
         e.toString(),
-        onContinue: () => controller?.resumeCamera(),
+        onContinue: () => controller.start(),
       );
     }
   }
@@ -623,10 +587,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
       endDrawer: CustomAppDrawer(),
       body: Stack(
         children: [
-          QRView(
-            key: qrKey,
-            onQRViewCreated: _onQRViewCreated,
-          ),
+          if (isCameraInitialized)
+            MobileScanner(
+              controller: controller,
+              onDetect: (capture) async {
+                final List<Barcode> barcodes = capture.barcodes;
+                if (barcodes.isNotEmpty) {
+                  final String? code = barcodes.first.rawValue;
+                  if (code != null) {
+                    controller.stop();
+                    await _processCode(code);
+                  }
+                }
+              },
+            ),
           const ScannerOverlay(
             overlayColor: Colors.black87,
             scanLineColor: Color(0xFF00E676),
@@ -681,13 +655,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         size: 28,
                       ),
                       onPressed: () async {
-                        await controller?.toggleFlash();
-                        setState(() {
-                          isFlashOn = !isFlashOn;
-                        });
+                        await controller.toggleTorch();
+                        setState(() => isFlashOn = !isFlashOn);
                       },
                     ),
                   ),
+                  // Keep the rest of the manual input UI exactly the same
                   const SizedBox(height: 24),
                   const Text(
                     'Or, Enter the bar code manually',

@@ -56,6 +56,7 @@ class _AppState extends State<App> {
                   physics: const BouncingScrollPhysics(),
                 ),
                 child: MaterialApp(
+                  debugShowCheckedModeBanner: false,
                   navigatorKey: navigatorKey,
                   initialRoute: AppRoutes.initialRoute,
                   routes: routes,

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rhino_bond/widgets/providers/user_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+  const EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -104,8 +104,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           filled: true,
-                          fillColor:
-                              Theme.of(context).colorScheme.surfaceVariant,
+                          fillColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -127,8 +128,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           filled: true,
-                          fillColor:
-                              Theme.of(context).colorScheme.surfaceVariant,
+                          fillColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                         ),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
@@ -154,8 +156,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           filled: true,
-                          fillColor:
-                              Theme.of(context).colorScheme.surfaceVariant,
+                          fillColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                         ),
                         keyboardType: TextInputType.phone,
                         validator: (value) {
