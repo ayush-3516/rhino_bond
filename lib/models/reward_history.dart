@@ -7,6 +7,7 @@ class RewardHistory {
   final String type;
   final String? productImage;
   final String? transactionId;
+  final String? productId;
 
   RewardHistory({
     required this.id,
@@ -17,5 +18,6 @@ class RewardHistory {
     required this.type,
     this.productImage,
     this.transactionId,
+    this.productId,
   });
 }

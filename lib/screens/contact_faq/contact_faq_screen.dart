@@ -109,21 +109,21 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
                     _buildContactItem(
                       Icons.email,
                       AppLocalizations.of(context).emailLabel,
-                      'support@rhinobond.com',
-                      () => _launchURL('mailto:support@rhinobond.com'),
+                      'jangidenterprises007@gmail.com',
+                      () => _launchURL('mailto:jangidenterprises007@gmail.com'),
                     ),
                     const SizedBox(height: 12),
                     _buildContactItem(
                       Icons.phone,
                       AppLocalizations.of(context).phoneLabel,
-                      '+1 (123) 456-7890',
-                      () => _launchURL('tel:+11234567890'),
+                      '+91 91062 34402',
+                      () => _launchURL('tel:+919106234402'),
                     ),
                     const SizedBox(height: 12),
                     _buildContactItem(
                       Icons.location_on,
                       AppLocalizations.of(context).addressLabel,
-                      '123 Business Street, City, Country',
+                      'Shop No. 8, Plot No. 1/34, Ward 10/A, Gandhidham(Kutch) 370201',
                       () {},
                     ),
                   ],
@@ -247,24 +247,26 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
         children: [
           Icon(icon, size: 24),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              Text(
-                content,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
+                Text(
+                  content,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

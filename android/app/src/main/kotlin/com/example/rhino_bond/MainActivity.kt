@@ -1,4 +1,4 @@
-package com.example.rhino_bond
+package com.gpr_technology_ventures.rhino_bond
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine

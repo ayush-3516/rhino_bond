@@ -1,10 +1,12 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.gpr_technology_ventures.rhino_bond"
+>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
     <uses-feature android:name="android.hardware.camera"/>
     
     <application
-        android:label="rhino_bond"
+        android:label="Rhino Bond"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

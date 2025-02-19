@@ -7,7 +7,7 @@ import 'package:rhino_bond/widgets/auth_wrapper.dart';
 import 'package:rhino_bond/screens/settings/settings_screen.dart';
 import 'package:rhino_bond/screens/contact_faq/contact_faq_screen.dart';
 import 'package:rhino_bond/screens/edit_profile/edit_profile_screen.dart';
-import 'package:rhino_bond/screens/user_details/user_details_screen.dart';
+// import 'package:rhino_bond/screens/user_details/user_details_screen.dart'; // Comment this out if the file is missing
 import 'package:rhino_bond/screens/reward_products_screen.dart';
 import 'package:rhino_bond/screens/rewards_history_screen.dart';
 import 'package:rhino_bond/screens/complete_profile_screen.dart';
@@ -133,7 +133,7 @@ final Map<String, Widget Function(BuildContext)> routes = {
   '/settings': (context) => const SettingsScreen(),
   '/contact_faq': (context) => const ContactFAQScreen(),
   '/edit_profile': (context) => const EditProfileScreen(),
-  '/user-details': (context) => const UserDetailsScreen(),
+  // '/user-details': (context) => const UserDetailsScreen(), // Comment this out if the file is missing
   '/rewards': (context) => const RewardProductsScreen(),
 };
 

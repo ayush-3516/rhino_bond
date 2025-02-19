@@ -142,13 +142,6 @@ class CustomAppDrawer extends StatelessWidget {
                 ),
                 _buildDrawerItem(
                   context,
-                  icon: Icons.person_outline,
-                  activeIcon: Icons.person,
-                  label: 'User Details',
-                  route: '/user-details',
-                ),
-                _buildDrawerItem(
-                  context,
                   icon: Icons.settings_outlined,
                   activeIcon: Icons.settings,
                   label: AppLocalizations.of(context).settingsTitle,
@@ -184,7 +177,7 @@ class CustomAppDrawer extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Center(
                     child: Image.asset(
-                      'lib/assets/GPR LOGO.png',
+                      'lib/assets/gpr_logo.png',
                       width: 150,
                       fit: BoxFit.contain,
                     ),

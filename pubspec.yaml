@@ -1,9 +1,10 @@
 name: rhino_bond
 description: "A new Flutter project."
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   sdk: ^3.6.0
+
 dependencies:
   flutter:
     sdk: flutter
@@ -12,16 +13,14 @@ dependencies:
   shared_preferences: ^2.2.2
   flutter_localizations:
     sdk: flutter
-  intl: ^0.19.0
-  supabase: ^2.0.0
-  provider: ^6.1.1
   supabase_flutter: ^2.0.0
+  provider: ^6.1.1
   cupertino_icons: ^1.0.8
   flutter_secure_storage: ^9.2.2
   flutter_svg: ^2.0.7
   url_launcher: ^6.2.0
   flutter_carousel_widget: ^3.1.0
-  permission_handler: ^10.4.4
+  permission_handler: ^11.0.0
   shimmer: ^3.0.0
   sms_autofill: ^2.3.0
 
@@ -31,12 +30,20 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.6
   intl_utils: ^2.8.8
+  flutter_launcher_icons: ^0.14.3
+
 flutter:
   uses-material-design: true
   assets:
+    - lib/assets/rhino_bond_logo.png
     - lib/assets/logo.svg
-    - lib/assets/GPR LOGO.png
+    - lib/assets/gpr_logo.png
   generate: true
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "lib/assets/rhino_bond_logo.png"
 
 l10n:
   arb-dir: lib/l10n

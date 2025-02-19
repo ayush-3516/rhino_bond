@@ -62,29 +62,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Section
-              _buildSectionHeader(AppLocalizations.of(context).profileSettings),
-              Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.lock),
-                      title: Text(AppLocalizations.of(context).changePassword),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ChangePasswordScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
               // App Settings Section
               _buildSectionHeader(AppLocalizations.of(context).appSettings),
               Card(
@@ -192,29 +169,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             builder: (context) => const TermsOfServiceScreen(),
                           ),
                         );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // About Section
-              _buildSectionHeader(AppLocalizations.of(context).about),
-              Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.info),
-                      title: Text(AppLocalizations.of(context).appVersion),
-                      trailing: const Text('1.0.0'),
-                    ),
-                    ListTile(
-                      leading: const Icon(Icons.update),
-                      title: Text(AppLocalizations.of(context).checkForUpdates),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        // TODO: Implement update check
                       },
                     ),
                   ],
