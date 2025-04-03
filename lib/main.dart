@@ -9,6 +9,7 @@ import 'package:rhino_bond/routes/app.routes.dart';
 import 'package:rhino_bond/providers/app.providers.dart';
 import 'package:rhino_bond/providers/theme_provider.dart';
 import 'package:rhino_bond/providers/language_provider.dart';
+import 'package:rhino_bond/utils/logger.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -109,9 +110,9 @@ void main() async {
       url: SupabaseCredentials.url,
       anonKey: SupabaseCredentials.anonKey,
     );
-    print("Supabase initialized successfully");
+    Logger.success("Supabase initialized successfully");
   } catch (e) {
-    print("Error initializing Supabase: $e");
+    Logger.error("Error initializing Supabase: $e");
   }
 
   runApp(const App());

@@ -7,7 +7,6 @@ import 'package:rhino_bond/providers/language_provider.dart';
 import 'package:rhino_bond/l10n/localization.dart';
 import 'package:rhino_bond/screens/settings/privacy_policy_screen.dart';
 import 'package:rhino_bond/screens/settings/terms_of_service_screen.dart';
-import 'package:rhino_bond/screens/settings/change_password_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

@@ -5,6 +5,7 @@ import 'package:rhino_bond/widgets/appbar.dart';
 import 'package:rhino_bond/widgets/providers/user_provider.dart';
 import 'package:rhino_bond/services/authentication.services.dart';
 import 'package:rhino_bond/screens/scanner/scanner_screen.dart';
+import 'package:rhino_bond/utils/logger.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -37,7 +38,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> _loadEvents() async {
     if (!mounted) return;
-    print('Loading events...');
+    Logger.debug('Loading events...');
 
     setState(() {
       _isLoading = true;
@@ -48,16 +49,16 @@ class _HomeViewState extends State<HomeView> {
         Provider.of<AuthenticationService>(context, listen: false);
     try {
       final events = await authService.getActiveEvents();
-      print('Fetched ${events.length} events');
+      Logger.info('Fetched ${events.length} events');
       if (!mounted) return;
 
       final activeEvents = _filterActiveEvents(events);
-      print('Filtered to ${activeEvents.length} active events');
+      Logger.info('Filtered to ${activeEvents.length} active events');
 
       setState(() {
         _events = activeEvents;
         _isLoading = false;
-        print('Events updated in state');
+        Logger.debug('Events updated in state');
       });
     } catch (e) {
       if (!mounted) return;

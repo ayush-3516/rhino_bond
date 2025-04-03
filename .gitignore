@@ -12,34 +12,73 @@
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# Editor/IDE specific
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.orig
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter/Dart specific
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
-/build/
+build/
+coverage/
+*.lock
+*.g.dart
+*.mocks.dart
 
-# Symbolication related
+# Flutter iOS/Android build artifacts
+**/ios/Flutter/.last_build_id
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# Xcode
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+
+# CocoaPods
+ios/Podfile.lock
+ios/.flutter-plugins
+ios/.flutter-plugins-dependencies
+
+# Obfuscation & Symbolication
+app.*.map.json
 app.*.symbols
 
-# Obfuscation related
-app.*.map.json
+# Firebase & Google Services
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+
+# macOS
+macos/Flutter/ephemeral/
+macos/.symlinks/
+
+# Web
+web/.dart_tool/
+
+# Linux
+linux/flutter/ephemeral/
+
+# Windows
+windows/flutter/ephemeral/

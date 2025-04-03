@@ -11,6 +11,7 @@ import 'package:rhino_bond/screens/edit_profile/edit_profile_screen.dart';
 import 'package:rhino_bond/screens/reward_products_screen.dart';
 import 'package:rhino_bond/screens/rewards_history_screen.dart';
 import 'package:rhino_bond/screens/complete_profile_screen.dart';
+import 'package:rhino_bond/screens/scanner/scanner_screen.dart';
 
 class CustomPageTransitions {
   static Route createRoute(Widget page, RouteSettings settings) {
@@ -135,6 +136,7 @@ final Map<String, Widget Function(BuildContext)> routes = {
   '/edit_profile': (context) => const EditProfileScreen(),
   // '/user-details': (context) => const UserDetailsScreen(), // Comment this out if the file is missing
   '/rewards': (context) => const RewardProductsScreen(),
+  '/scanner': (context) => const ScannerScreen(),
 };
 
 Route<dynamic>? onGenerateRoute(RouteSettings settings) {

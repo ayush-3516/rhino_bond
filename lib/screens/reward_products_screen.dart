@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:rhino_bond/models/redemption_product.dart';
 import 'package:rhino_bond/widgets/custom_app_drawer.dart' show CustomAppDrawer;
 import 'package:rhino_bond/widgets/appbar.dart' show CustomAppBar;
 import 'package:provider/provider.dart';
 import 'package:rhino_bond/notifiers/redemption_notifier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:rhino_bond/utils/logger.dart';
+import 'package:rhino_bond/screens/scanner/scanner_screen.dart';
 
 class RewardProductsScreen extends StatefulWidget {
   const RewardProductsScreen({super.key});
@@ -33,13 +34,13 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
           .eq('is_active', true)
           .order('created_at', ascending: false);
 
-      print('Fetched products: $response'); // Debug log
+      Logger.info('Fetched products: $response'); // Debug log
 
       final products = (response as List)
           .map((product) => RedemptionProduct.fromJson(product))
           .toList();
 
-      print('Mapped products: $products'); // Debug log
+      Logger.info('Mapped products: $products'); // Debug log
       return products;
     } catch (e) {
       throw Exception('Failed to load products: $e');
@@ -341,7 +342,12 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.pushNamed(context, '/scan');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ScannerScreen(),
+            ),
+          );
         },
         icon: const Icon(Icons.qr_code_scanner),
         label: const Text('Scan QR'),

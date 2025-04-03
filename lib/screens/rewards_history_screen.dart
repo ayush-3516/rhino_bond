@@ -4,7 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:rhino_bond/widgets/appbar.dart';
 import 'package:rhino_bond/widgets/custom_app_drawer.dart';
 import 'package:rhino_bond/models/reward_history.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class RewardsHistoryScreen extends StatefulWidget {
@@ -18,7 +17,6 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  late AnimationController _titleAnimationController;
 
   final SupabaseClient _supabase = Supabase.instance.client;
   String _selectedFilter = 'All';
@@ -112,7 +110,7 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
       case 'Earned':
         return history.where((item) => item.type == 'earn').toList();
       case 'Redeemed':
-        return history.where((item) => item.type != 'earn').toList();
+        return history.where((item) => item.type != 'redeem').toList();
       case 'All':
       default:
         return history;
@@ -151,7 +149,7 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
           .select('name')
           .eq('id', transaction.productId!)
           .single();
-      productName = response['name'] ?? 'N/A';
+      productName = response['name'];
     }
 
     showModalBottomSheet(
@@ -168,7 +166,7 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(),
                   blurRadius: 10,
                   offset: Offset(0, -2),
                 ),
@@ -193,22 +191,24 @@ class _RewardsHistoryScreenState extends State<RewardsHistoryScreen>
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                _buildCopyableField('Transaction ID', transaction.transactionId ?? 'N/A'),
-                _buildCopyableField('Type', transaction.type ?? 'N/A'),
+                _buildCopyableField(
+                    'Transaction ID', transaction.transactionId ?? 'N/A'),
+                _buildCopyableField('Type', transaction.type),
                 _buildCopyableField('Date', _formatDate(transaction.date)),
                 _buildCopyableField('Product', productName),
                 _buildCopyableField('Points', transaction.points.toString()),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    backgroundColor: Theme.of(context).primaryColor, // Button color
+                    backgroundColor:
+                        Theme.of(context).primaryColor, // Button color
                   ),
+                  child: const Text('Close'),
                 ),
               ],
             ),

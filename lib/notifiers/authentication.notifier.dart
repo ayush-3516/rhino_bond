@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rhino_bond/services/authentication.services.dart';
 import 'package:rhino_bond/widgets/providers/user_provider.dart';
+import 'package:rhino_bond/utils/logger.dart';
 
 /// Manages authentication state and interacts with the authentication service.
 class AuthenticationNotifier extends ChangeNotifier {
@@ -29,9 +30,9 @@ class AuthenticationNotifier extends ChangeNotifier {
       _isAuthenticated = false;
       _currentUser = null;
       notifyListeners();
-      print("Logged out successfully");
+      Logger.success("Logged out successfully");
     } catch (e) {
-      print("Error during logout: $e");
+      Logger.error("Error during logout: $e");
       rethrow;
     } finally {
       setLoading(false);
@@ -46,10 +47,10 @@ class AuthenticationNotifier extends ChangeNotifier {
 
   /// Updates the authentication status of the user.
   void setAuthenticated(bool value) {
-    print("Setting authentication status to: $value");
+    Logger.info("Setting authentication status to: $value");
     _isAuthenticated = value;
     notifyListeners();
-    print("Authentication status updated and listeners notified");
+    Logger.info("Authentication status updated and listeners notified");
   }
 
   /// Starts the authentication listener.
@@ -65,14 +66,14 @@ class AuthenticationNotifier extends ChangeNotifier {
     try {
       // Only update and notify if the user data has actually changed
       if (_currentUser?['id'] != userProfile['id']) {
-        print(
+        Logger.info(
             "Setting user profile: ${userProfile['name']}, ${userProfile['email']}");
-        print("Full User Data: $userProfile");
+        Logger.info("Full User Data: $userProfile");
         _currentUser = userProfile;
         _isAuthenticated = true;
       }
     } catch (e) {
-      print("Error notifying user profile: $e");
+      Logger.error("Error notifying user profile: $e");
       rethrow;
     }
   }
@@ -80,7 +81,7 @@ class AuthenticationNotifier extends ChangeNotifier {
   /// Fetches the user profile for the current authenticated user.
   Future<void> fetchCurrentUserProfile() async {
     if (_isAuthenticated && _currentUser == null) {
-      print("Fetching current user profile");
+      Logger.info("Fetching current user profile");
       await fetchUserProfile(_authenticationService.currentUserId);
     }
   }
@@ -102,16 +103,16 @@ class AuthenticationNotifier extends ChangeNotifier {
     required BuildContext context,
     required String phoneNumber,
   }) async {
-    print("Sending verification code to phone number: $phoneNumber");
+    Logger.info("Sending verification code to phone number: $phoneNumber");
     try {
       await _authenticationService.sendVerificationCode(
           context: context, phoneNumber: phoneNumber);
       _isPhoneNumberVerified = true;
       notifyListeners();
-      print("OTP sent successfully");
+      Logger.success("OTP sent successfully");
       return "Verification Code sent successfully";
     } catch (e) {
-      print(e);
+      Logger.error("$e");
       return "Failed to send verification code";
     }
   }
@@ -150,7 +151,7 @@ class AuthenticationNotifier extends ChangeNotifier {
         'isNewUser': isNewUser,
       };
     } catch (e) {
-      print(e);
+      Logger.error("$e");
       return {
         'status': 'error',
         'message': e.toString(),
@@ -172,28 +173,28 @@ class AuthenticationNotifier extends ChangeNotifier {
       // Refresh user profile
       await fetchUserProfile(userId);
     } catch (e) {
-      print("Error completing registration: $e");
+      Logger.error("Error completing registration: $e");
       rethrow;
     }
   }
 
   /// Fetches the user profile for the specified user ID.
   Future<void> fetchUserProfile(String userId) async {
-    print("Fetching user profile for ID: $userId");
+    Logger.info("Fetching user profile for ID: $userId");
     try {
       final userProfile = await _authenticationService.getUserProfile(userId);
       if (userProfile != null) {
         notifyUserProfile(userProfile);
-        print(
+        Logger.info(
             "User profile fetched: ${userProfile['name']}, ${userProfile['email']}");
 
         // Update UserProvider with all user data
         _userProvider.setUserData(userProfile);
       } else {
-        print("User profile is null");
+        Logger.info("User profile is null");
       }
     } catch (e) {
-      print("Failed to fetch user profile: $e");
+      Logger.info("Failed to fetch user profile: $e");
     }
   }
 }
