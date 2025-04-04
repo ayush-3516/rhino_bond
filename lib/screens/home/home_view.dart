@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rhino_bond/widgets/custom_app_drawer.dart';
 import 'package:rhino_bond/widgets/appbar.dart';
+import 'package:rhino_bond/widgets/auth_wrapper.dart';
 import 'package:rhino_bond/widgets/providers/user_provider.dart';
 import 'package:rhino_bond/services/authentication.services.dart';
 import 'package:rhino_bond/screens/scanner/scanner_screen.dart';
+import 'package:rhino_bond/screens/kyc/kyc_screen.dart';
 import 'package:rhino_bond/utils/logger.dart';
 
 class HomeView extends StatefulWidget {
@@ -277,41 +279,100 @@ class _HomeViewState extends State<HomeView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Card(
-                    elevation: 4,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ScannerScreen(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.qr_code_scanner,
-                              size: 32,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'Scan your QR Code',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor,
+                  Consumer<UserProvider>(
+                    builder: (context, userProvider, _) {
+                      return Column(
+                        children: [
+                          if (userProvider.userData?['kyc_status'] ==
+                              false) ...[
+                            Card(
+                              elevation: 4,
+                              color: Colors.orange[100],
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AuthWrapper(child: KYCScreen()),
+                                    ),
+                                  ).then((success) {
+                                    if (success == true) {
+                                      userProvider.refreshUserData();
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning_amber,
+                                            size: 32,
+                                            color: Colors.orange[800],
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            'Complete KYC Verification',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.orange[800],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      const Text(
+                                        'Please complete your KYC by providing your PAN card details to continue using the app.',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
+                            const SizedBox(height: 16),
                           ],
-                        ),
-                      ),
-                    ),
+                          Card(
+                            elevation: 4,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(context, '/scanner');
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.qr_code_scanner,
+                                      size: 32,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Scan your QR Code',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
                   _buildEventCarousel(),

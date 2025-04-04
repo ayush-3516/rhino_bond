@@ -22,39 +22,36 @@ class RewardsHistoryService {
         try {
           return RewardHistory(
             id: transaction['id'],
-            title:
-                transaction['type'] == 'earn'
-                    ? 'Points Earned'
-                    : transaction['type'] == 'airdrop'
+            title: transaction['type'] == 'earn'
+                ? 'Points Earned'
+                : transaction['type'] == 'airdrop'
                     ? 'Airdrop Received'
                     : 'Product Redeemed',
-            description:
-                transaction['type'] == 'earn'
-                    ? 'Earned points'
-                    : transaction['type'] == 'airdrop'
+            description: transaction['type'] == 'earn'
+                ? 'Earned points'
+                : transaction['type'] == 'airdrop'
                     ? 'Received airdrop'
                     : transaction['product_id'] != null
-                    ? 'Redeemed product'
-                    : 'Points deducted',
-            points:
-                (transaction['type'] == 'earn' ||
-                        transaction['type'] == 'airdrop')
-                    ? transaction['points']
-                    : -transaction['points'],
+                        ? 'Redeemed product'
+                        : 'Points deducted',
+            points: (transaction['type'] == 'earn' ||
+                    transaction['type'] == 'airdrop')
+                ? transaction['points']
+                : -transaction['points'],
             date: DateTime.parse(transaction['timestamp']),
             type: transaction['type'],
             transactionId: transaction['id'],
+            productId: transaction['product_id'],
           );
         } catch (e) {
           return RewardHistory(
             id: transaction['id'],
             title: 'Transaction',
             description: 'Transaction completed',
-            points:
-                (transaction['type'] == 'earn' ||
-                        transaction['type'] == 'airdrop')
-                    ? transaction['points']
-                    : -transaction['points'],
+            points: (transaction['type'] == 'earn' ||
+                    transaction['type'] == 'airdrop')
+                ? transaction['points']
+                : -transaction['points'],
             date: DateTime.parse(transaction['timestamp']),
             type: transaction['type'],
             transactionId: transaction['id'],

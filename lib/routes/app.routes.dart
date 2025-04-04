@@ -12,6 +12,7 @@ import 'package:rhino_bond/screens/reward_products_screen.dart';
 import 'package:rhino_bond/screens/rewards_history_screen.dart';
 import 'package:rhino_bond/screens/complete_profile_screen.dart';
 import 'package:rhino_bond/screens/scanner/scanner_screen.dart';
+import 'package:rhino_bond/screens/kyc/kyc_screen.dart';
 
 class CustomPageTransitions {
   static Route createRoute(Widget page, RouteSettings settings) {
@@ -137,8 +138,8 @@ final Map<String, Widget Function(BuildContext)> routes = {
   // '/user-details': (context) => const UserDetailsScreen(), // Comment this out if the file is missing
   '/rewards': (context) => const RewardProductsScreen(),
   '/scanner': (context) => const ScannerScreen(),
+  '/kyc': (context) => const AuthWrapper(child: KYCScreen()),
 };
-
 Route<dynamic>? onGenerateRoute(RouteSettings settings) {
   final builder = routes[settings.name];
   if (builder != null) {

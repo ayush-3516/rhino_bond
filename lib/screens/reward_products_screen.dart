@@ -249,12 +249,70 @@ class _RewardProductsScreenState extends State<RewardProductsScreen> {
                                           return;
                                         }
 
+                                        // Show confirmation dialog
+                                        final confirmed =
+                                            await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text(
+                                                'Confirm Redemption'),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    'Product: ${product.name}'),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                    'Points required: ${product.pointsRequired}'),
+                                                const SizedBox(height: 8),
+                                                FutureBuilder(
+                                                  future: _supabase
+                                                      .from('users')
+                                                      .select('points_balance')
+                                                      .eq('id', user.id)
+                                                      .single(),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.hasData) {
+                                                      final userPoints = snapshot
+                                                                  .data![
+                                                              'points_balance']
+                                                          as int;
+                                                      return Text(
+                                                          'Your points: $userPoints');
+                                                    }
+                                                    return const Text(
+                                                        'Loading your points...');
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, false),
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, true),
+                                                child: const Text('Confirm'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (confirmed != true) {
+                                          return;
+                                        }
+
                                         final redemptionNotifier =
                                             Provider.of<RedemptionNotifier>(
                                                 context,
                                                 listen: false);
 
-                                        // Get current user points
+                                        // Get current user points again in case they changed
                                         final userResponse = await _supabase
                                             .from('users')
                                             .select('points_balance')

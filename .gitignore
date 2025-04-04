@@ -82,3 +82,7 @@ linux/flutter/ephemeral/
 
 # Windows
 windows/flutter/ephemeral/
+
+
+key.properties
+my-release-key.jks

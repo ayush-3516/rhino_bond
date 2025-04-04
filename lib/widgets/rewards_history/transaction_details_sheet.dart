@@ -23,13 +23,6 @@ class TransactionDetailsSheet extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -73,17 +66,6 @@ class TransactionDetailsSheet extends StatelessWidget {
               transaction.points.toString(),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                backgroundColor: Theme.of(context).primaryColor,
-              ),
-              child: const Text('Close'),
-            ),
           ],
         ),
       ),
@@ -94,12 +76,11 @@ class TransactionDetailsSheet extends StatelessWidget {
     if (transaction.productId == null) return 'N/A';
 
     try {
-      final response =
-          await supabase
-              .from('products')
-              .select('name')
-              .eq('id', transaction.productId!)
-              .single();
+      final response = await supabase
+          .from('redemption_products')
+          .select('name')
+          .eq('id', transaction.productId!)
+          .single();
       return response['name'];
     } catch (e) {
       return 'N/A';
