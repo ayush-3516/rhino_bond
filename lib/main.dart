@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:rhino_bond/l10n/localization.dart';
 import 'package:rhino_bond/credentials/supabase.credentials.dart';
@@ -105,12 +106,38 @@ class _AppState extends State<App> {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive for local storage
+  await Hive.initFlutter();
+
   try {
     await Supabase.initialize(
       url: SupabaseCredentials.url,
       anonKey: SupabaseCredentials.anonKey,
+      authOptions: FlutterAuthClientOptions(
+        autoRefreshToken: true,
+        authFlowType: AuthFlowType.pkce,
+      ),
     );
     Logger.success("Supabase initialized successfully");
+
+    // Check for existing session on startup
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null) {
+      Logger.info("Restored existing session for user: ${session.user.email}");
+    }
+
+    // Listen for auth state changes
+    Supabase.instance.client.auth.onAuthStateChange.listen((event) {
+      final session = event.session;
+      if (session != null) {
+        Logger.info(
+            "Auth state changed: User signed in (${session.user.email})");
+      } else {
+        Logger.info("Auth state changed: User signed out");
+      }
+    });
   } catch (e) {
     Logger.error("Error initializing Supabase: $e");
   }
