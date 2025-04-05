@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:rhino_bond/widgets/appbar.dart';
 import 'package:rhino_bond/widgets/custom_app_drawer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:rhino_bond/l10n/localization.dart';
+import 'package:rhino_bond/services/contact_service.dart';
+import 'package:rhino_bond/services/session_manager.dart';
+import 'package:rhino_bond/services/authentication.services.dart';
 
 class ContactFAQScreen extends StatefulWidget {
   const ContactFAQScreen({super.key});
@@ -14,9 +18,9 @@ class ContactFAQScreen extends StatefulWidget {
 class _ContactFAQScreenState extends State<ContactFAQScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
   final _messageController = TextEditingController();
+  String? _userName;
+  String? _userEmail;
   late String _selectedTopic;
   late List<String> _topics;
 
@@ -25,6 +29,82 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
     super.initState();
     _selectedTopic = '';
     _topics = [];
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      // First try getting session from secure storage
+      var sessionToken = await SessionManager.getSession();
+
+      // If no session in storage, check current auth state
+      if (sessionToken == null) {
+        try {
+          // Try to get current session directly from Supabase
+          final session =
+              AuthenticationService.supabaseClient.auth.currentSession;
+          if (session != null) {
+            sessionToken = session.accessToken;
+            await SessionManager.saveSession(sessionToken);
+          }
+        } catch (e) {
+          print('Error checking current session: $e');
+        }
+      }
+
+      if (sessionToken == null) {
+        print('No active session found');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please sign in to autofill your details')),
+        );
+        return;
+      }
+
+      final userId = _extractUserIdFromToken(sessionToken);
+      if (userId == null) {
+        print('Could not extract user ID from token');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Invalid session - please sign in again')),
+        );
+        await SessionManager.clearSession();
+        return;
+      }
+
+      final authService = AuthenticationService();
+      final profile = await authService.getUserProfile(userId);
+
+      if (profile == null) {
+        print('No profile found for user $userId');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Profile not found - please complete your profile')),
+        );
+        return;
+      }
+
+      if (profile['name'] == null || profile['email'] == null) {
+        print('Profile missing name or email: $profile');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please complete your profile details')),
+        );
+        return;
+      }
+
+      setState(() {
+        _userName = profile['name'].toString().trim();
+        _userEmail = profile['email'].toString().trim();
+        print('Loaded user: $_userName <$_userEmail>');
+      });
+    } catch (e) {
+      print('Error loading user data: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading user profile'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -42,8 +122,6 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
     _messageController.dispose();
     super.dispose();
   }
@@ -54,22 +132,81 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
     }
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement form submission
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).messageSent),
-          backgroundColor: Colors.green,
-        ),
-      );
-      // Clear form
-      _nameController.clear();
-      _emailController.clear();
-      _messageController.clear();
-      setState(() {
-        _selectedTopic = AppLocalizations.of(context).generalInquiry;
-      });
+      try {
+        final sessionToken = await SessionManager.getSession();
+        final userId =
+            sessionToken != null ? _extractUserIdFromToken(sessionToken) : null;
+        final contactService = ContactService();
+
+        // Map localized topic to database value
+        final topicMap = {
+          AppLocalizations.of(context).generalInquiry: 'General Inquiry',
+          AppLocalizations.of(context).technicalSupport: 'Technical Support',
+          AppLocalizations.of(context).accountIssues: 'Account Issues',
+          AppLocalizations.of(context).rewardsProgram: 'Rewards Program',
+          AppLocalizations.of(context).otherTopic: 'Other Topic',
+        };
+
+        if (_userName == null ||
+            _userName!.isEmpty ||
+            _userEmail == null ||
+            _userEmail!.isEmpty) {
+          throw Exception('Name and email are required');
+        }
+
+        print('Submitting contact message:');
+        print('Name: $_userName');
+        print('Email: $_userEmail');
+        print('Topic: ${topicMap[_selectedTopic]}');
+        print('Message: ${_messageController.text}');
+        print('User ID: $userId');
+
+        await contactService.submitContactMessage(
+          name: _userName!,
+          email: _userEmail!,
+          topic: topicMap[_selectedTopic]!,
+          message: _messageController.text,
+          userId: userId,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Message sent successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Show confirmation dialog
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Thank You!'),
+            content: Text(
+                'We have received your message and will get back to you soon.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+
+        // Clear form
+        _messageController.clear();
+        setState(() {
+          _selectedTopic = 'General Inquiry';
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send message. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -144,39 +281,22 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context).nameLabel,
-                        border: const OutlineInputBorder(),
+                    if (_userName != null && _userEmail != null)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Name: $_userName',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Email: $_userEmail',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppLocalizations.of(context).nameValidation;
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context).emailLabel,
-                        border: const OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppLocalizations.of(context).emailValidation;
-                        }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                            .hasMatch(value)) {
-                          return AppLocalizations.of(context)
-                              .emailFormatValidation;
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: _selectedTopic,
                       decoration: InputDecoration(
@@ -237,6 +357,22 @@ class _ContactFAQScreenState extends State<ContactFAQScreen> {
         ),
       ),
     );
+  }
+
+  String? _extractUserIdFromToken(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+
+      final payload = parts[1];
+      final normalized = base64.normalize(payload);
+      final decoded = utf8.decode(base64.decode(normalized));
+      final payloadMap = json.decode(decoded) as Map<String, dynamic>;
+
+      return payloadMap['sub'] as String?;
+    } catch (e) {
+      return null;
+    }
   }
 
   Widget _buildContactItem(

@@ -1,38 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rhino_bond/notifiers/authentication.notifier.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
-/// A StatefulWidget that represents the OTP verification view for users.
 class OTPVerificationView extends StatefulWidget {
-  /// The phone number to which the OTP was sent.
   final String phoneNumber;
-
-  /// Creates an instance of [OTPVerificationView].
   const OTPVerificationView({super.key, required this.phoneNumber});
 
   @override
   _OTPVerificationViewState createState() => _OTPVerificationViewState();
 }
 
-/// The state class for the [OTPVerificationView] widget.
-class _OTPVerificationViewState extends State<OTPVerificationView> {
-  /// Controller for the OTP input field.
+class _OTPVerificationViewState extends State<OTPVerificationView>
+    with CodeAutoFill {
   final TextEditingController _otpController = TextEditingController();
+  String? _appSignature;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSmsAutofill();
+  }
+
+  Future<void> _initSmsAutofill() async {
+    try {
+      _appSignature = await SmsAutoFill().getAppSignature;
+      await SmsAutoFill().listenForCode();
+    } catch (e) {
+      print('SMS Autofill initialization error: $e');
+    }
+  }
+
+  @override
+  void codeUpdated() {
+    final otp = _extractOtp(code ?? '');
+    if (otp != null && otp.length == 6) {
+      setState(() {
+        _otpController.text = otp;
+      });
+      Future.delayed(const Duration(milliseconds: 300), _verifyOtp);
+    }
+  }
+
+  String? _extractOtp(String message) {
+    final match =
+        RegExp(r'Your OTP for Rhino Bond is (\d{4,6})').firstMatch(message);
+    return match?.group(1);
+  }
+
+  @override
+  void dispose() {
+    SmsAutoFill().unregisterListener();
+    super.dispose();
+  }
+
+  Future<void> _verifyOtp() async {
+    if (_otpController.text.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
+      );
+      return;
+    }
+
+    try {
+      final auth = Provider.of<AuthenticationNotifier>(context, listen: false);
+      final result = await auth.verifyPhoneNumber(
+        context: context,
+        token: _otpController.text,
+        phoneNumber: widget.phoneNumber,
+      );
+
+      if (result['status'] == 'success') {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          result['isNewUser'] == true ? '/complete_profile' : '/',
+          (route) => false,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['message'] ?? 'Login Failed')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    /// Retrieves the [AuthenticationNotifier] from the provider.
-    final authenticationNotifier = Provider.of<AuthenticationNotifier>(context);
-
     return Scaffold(
       body: Stack(
         children: [
-          /// Background gradient for the OTP verification view.
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
                 colors: [
                   Colors.purple.shade800,
                   Colors.purple.shade600,
@@ -47,19 +110,13 @@ class _OTPVerificationViewState extends State<OTPVerificationView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Back button to navigate back to the previous screen.
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(height: 48),
-                    const Icon(
-                      Icons.account_balance_wallet,
-                      size: 64,
-                      color: Colors.white,
-                    ),
+                    const Icon(Icons.account_balance_wallet,
+                        size: 64, color: Colors.white),
                     const SizedBox(height: 24),
                     const Text(
                       'Verify OTP',
@@ -94,76 +151,32 @@ class _OTPVerificationViewState extends State<OTPVerificationView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          /// Input field for entering the OTP.
-                          TextFormField(
+                          PinFieldAutoFill(
                             controller: _otpController,
+                            codeLength: 6,
                             keyboardType: TextInputType.number,
-                            style: const TextStyle(fontSize: 16),
-                            decoration: InputDecoration(
-                              labelText: 'OTP',
-                              prefixIcon:
-                                  Icon(Icons.lock, color: Colors.purple[700]),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.purple[700]!,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.purple[700]!,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.purple[900]!,
-                                ),
-                              ),
-                              labelStyle: TextStyle(
-                                color: Colors.purple[700],
+                            onCodeChanged: (code) {
+                              if (code?.length == 6) _verifyOtp();
+                            },
+                            decoration: UnderlineDecoration(
+                              textStyle: const TextStyle(fontSize: 20),
+                              colorBuilder: PinListenColorBuilder(
+                                Colors.purple[700]!,
+                                Colors.purple[900]!,
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
-
-                          /// Button to verify the OTP.
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () async {
-                                final result = await authenticationNotifier
-                                    .verifyPhoneNumber(
-                                  context: context,
-                                  token: _otpController.text,
-                                  phoneNumber: widget.phoneNumber,
-                                );
-
-                                if (result['status'] == 'success') {
-                                  // Navigate to appropriate screen based on user status
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    result['isNewUser'] == true
-                                        ? '/complete_profile'
-                                        : '/',
-                                    (route) => false,
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          result['message'] ?? "Login Failed"),
-                                    ),
-                                  );
-                                }
-                              },
+                              onPressed: _verifyOtp,
                               style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.purple.shade700,
                                 padding: const EdgeInsets.all(16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                backgroundColor: Colors.purple.shade700,
                               ),
                               child: const Text(
                                 'Verify OTP',
